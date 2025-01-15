@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLP Live Item Display</title>
+    <script id="textFitLib" src="textFit.js"></script>
+    <script id="viewportSizeLib" src="viewportSize.js"></script>
+    <style>
+        p{
+            margin: 0.3em 0em 0em 0em;
+        }
+        p:nth-of-type(1) {
+            margin: 0em 0em 0em 0em;
+        }
+         body {
+            font-family: Arial, sans-serif;
+            /* font-weight: bold; */
+            position: relative;
+            margin: 0;
+            background-color: black;
+            color: white;
+            overflow: hidden;
+            /* text-indent: 3em hanging; */
+            width: 100vw;
+            height: 100vh;
+        }
+        .slideText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 0.5em;
+            opacity: 1;
+            transition: opacity 0.2s;
+            width: calc(100% - 50px);
+            height: calc(100% - 50px);
+        }
+    </style>
+</head>
+<body>
+    <div id="slideText0" class="slideText"></div>
+    <div id="slideText1" class="slideText"></div>
+
+    <script>
+        const host = "localhost";
+        const websocket_port = 4317;
+        const http_port = 336;
+        const http_api_url = "/api/v2/controller/live-item"
+        const slideText0 = document.getElementById('slideText0');
+        const slideText1 = document.getElementById('slideText1');
+
+        var currentSlide = slideText0;
+        var lastSlide    = slideText1;
+        var useSecondSlideDiv = false; // selects which div is shown (for transitions)
+        var currentSlideHTML = "" // stores the current html to check for changes
+        var screenBlanked = false // true if display is blanked
+
+        async function wsConnect() {
+            ws = new WebSocket('ws://' + host + ':' + websocket_port);
+            ws.onmessage = (event) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const state = JSON.parse(reader.result.toString()).results;
+                    if (screenBlanked != state.blank){
+                        if (!state.blank) {
+                            slideText0.innerHTML = "";
+                            slideText1.innerHTML="";
+                            currentSlideHTML="";
+                            screenBlanked = state.blank;
+                            fetchSlideText();
+                        } else { 
+                            screenBlanked = state.blank;
+                            updateOpacity(); 
+                        }
+                    }
+                };
+                reader.readAsText(event.data);
+            }
+                /*
+                EXAMPLE MESSAGE:
+                {
+                "counter": 21,
+                "service": 2,
+                "slide": 0,
+                "item": "66e8ff2d-d315-11ef-b9aa-5c879cf04915",
+                "twelve": false,
+                "blank": false,
+                "theme": false,
+                "display": true,
+                "version": 3,
+                "isSecure": false,
+                "chordNotation": "english"
+                } */
+        }
+
+
+        async function fetchSlideText() {
+            currentSlide =  useSecondSlideDiv ? slideText1 : slideText0;
+            lastSlide    = !useSecondSlideDiv ? slideText1 : slideText0;
+            slideText0.style.width = viewportSize.getWidth() -50 + 'px';
+            slideText0.style.height = viewportSize.getHeight() -50 + 'px';
+            slideText1.style.width = viewportSize.getWidth() -50 + 'px';
+            slideText1.style.height = viewportSize.getHeight() -50 + 'px';
+            
+            try {
+                const response = await fetch('http://' + host + ':' + http_port + http_api_url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                // console.log(data);
+                
+                // Check if we have slides and the first slide has text
+                if (data.slides && data.slides.length > 0 && data.slides[0].text) {
+                    let slideHTML = data.slides[0].html;
+                    slideHTML = '<p>' + slideHTML.replaceAll('<br>','<p>');
+                    if (currentSlideHTML != slideHTML){
+                        console.log('difff');
+                        currentSlide.innerHTML = slideHTML;
+                        currentSlideHTML = slideHTML;
+                        updateOpacity();
+                        useSecondSlideDiv = !useSecondSlideDiv; // switch which DIV is in use
+                    }
+                } else {
+                    throw new Error('No slide text data');
+                }
+            } catch (error) {
+                console.log(error);
+            }
+            textFit(slideText0, {minFontSize:10, multiLine:true, maxFontSize:150});
+            textFit(slideText1, {minFontSize:10, multiLine:true, maxFontSize:150});
+        }
+
+        function updateOpacity() {
+            currentSlide.style.opacity = screenBlanked ? 0 : 1;
+            lastSlide.style.opacity = 0;
+        }
+
+        // Fetch immediately when page loads
+        fetchSlideText();
+        wsConnect();
+
+        // Then update every 100 ms
+        setInterval(fetchSlideText, 100);
+    </script>
+</body>
+</html>
