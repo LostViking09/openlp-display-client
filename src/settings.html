@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bulma.min.css">
+    <title>Settings - OpenLP Display Client</title>
+    <style>
+      body {
+        margin: 2rem;
+      }
+
+      input[type="color"] {
+  width: 5em; 
+  height: 3em;
+  margin: 0;
+  padding: var(--bulma-control-padding-vertical) var(--bulma-control-padding-horizontal);
+  border-width: var(--bulma-control-border-width);
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-right-radius: var(--bulma-burger-border-radius);
+  border-bottom-right-radius: var(--bulma-burger-border-radius);
+  border-color: var(--bulma-border);
+  overflow: hidden;
+  background-color: var(--bulma-background);
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--bulma-burger-border-radius);
+}
+
+input[type="color"]::-webkit-color-swatch {
+  margin: 0;
+  padding: 0;
+  border: none;
+  border: none;
+  border-radius: var(--bulma-burger-border-radius);
+}
+
+    </style>
+</head>
+<body>
+
+      <label class="label">Startup</label>
+      <div class="field has-addons">
+        <div class="control">
+          <button class="button is-primary">Settings panel</button>
+        </div>
+        <div class="control">
+          <button class="button">Live display window</button>
+        </div>
+      </div>
+
+      <label class="label">Window Type</label>
+      <div class="field has-addons">
+        <div class="control">
+          <button class="button">
+            Normal
+          </button>
+        </div>
+        <div class="control">
+          <button class="button">
+            Borderless
+          </button>
+        </div>
+        <div class="control">
+          <button class="button">
+            Fullscreen
+          </button>
+        </div>
+      </div>
+
+      <label class="label">Window position (X, Y)</label>
+      <div class="field is-grouped">
+        <div class="control">
+          <input class="input" type="number" placeholder="" />
+        </div>
+        <div class="control">
+          <input class="input" type="number" placeholder="" />
+        </div>
+        <button class="button" disabled>Get current</portal></button>
+      </div>
+
+      <label class="label">Window size (width, height)</label>
+      <div class="field is-grouped">
+        <div class="control">
+          <input class="input" type="number" placeholder="" />
+        </div>
+        <div class="control">
+          <input class="input" type="number" placeholder="" />
+        </div>
+        <button class="button is-loading">Get current</button>
+      </div>
+
+      <label class="label">Font face</label>
+      <div class="field has-addons">  
+        <div class="control">
+          <input class="input" type="text" placeholder="Arial" />
+        </div>
+      </div>
+
+      <label class="label">Font size (static)</label>
+      <div class="field has-addons">  
+        <div class="control">
+          <input class="input" type="number" placeholder="16px" />
+        </div>
+        <div class="control">
+          <div class="button is-static">
+            px
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Dynamic font sizing</label>
+        <div class="control">
+          <label class="checkbox">
+            <input type="checkbox" />
+            Fill screen with text by dynamically changing its size
+          </label>
+        </div>
+      </div>
+
+      <label class="label">Colors</label>
+      <div class="field is-grouped">
+        <div class="field has-addons">
+          <div class="control">
+            <div class="button is-static">
+              Text Color: 
+            </div>
+          </div>
+          <div class="control">
+            <input type="color" id="head" name="head" value="#e66465" />
+          </div>
+        </div>
+        <div class="field has-addons">
+          <div class="control">
+            <div class="button is-static">
+              Background Color: 
+            </div>
+          </div>
+          <div class="control">
+            <input type="color" id="head" name="head" value="#e66465" />
+          </div>
+        </div>
+      </div>
+
+      <label class="label">Fade time</label>
+      <div class="field has-addons">  
+        <div class="control">
+          <input class="input" type="number" placeholder="2" />
+        </div>
+        <div class="control">
+          <div class="button is-static">
+            seconds
+          </div>
+        </div>
+      </div>
+
+      <label class="label">Connection settings</label>
+      <div class="field has-addons">  
+        <div class="control">
+          <div class="button is-static">
+            OpenLP server ip and port:
+          </div>
+        </div>
+        <div class="control is-right">
+          <input class="input" type="text" placeholder="192.168.0.123" style="text-align:right;"/>
+        </div>
+        <div class="control">
+          <button class="button is-static is-disabled" disabled>
+            :
+          </button>
+        </div>
+        <div class="control">
+          <input class="input" type="text" placeholder="336" />
+        </div>
+      </div>
+      <div class="field has-addons">  
+        <div class="control">
+          <div class="button is-static">
+            Websocket port:
+          </div>
+        </div>
+        <div class="control">
+          <input class="input" type="text" placeholder="4317" />
+        </div>
+      </div>
+</body>
+</html>
