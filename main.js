@@ -37,6 +37,10 @@ ipcMain.on("start-display-window", async () => {
   displayWindow = createDisplayWindow();
 });
 
+ipcMain.on("start-settings-window", async () => {
+  settingsWindow = createSettingsWindow();
+});
+
 
 var borderlessEnabled = (store.get('windowType') === 'Borderless');
 

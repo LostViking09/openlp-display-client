@@ -137,12 +137,12 @@ function setupExitButton() {
   }
 }
 
-// Setup handler for starting main window
-function setupStartMainWindowButton() {
-  const startMainWindowButton = document.getElementById('startDisplay');
-  if (startMainWindowButton) {
-    startMainWindowButton.addEventListener('click', () => {
-      window.electron.window.main.start();
+// Setup handler for starting display window
+function setupStartDisplayWindowButton() {
+  const startDisplayButton = document.getElementById('startDisplay');
+  if (startDisplayButton) {
+    startDisplayButton.addEventListener('click', () => {
+      window.electron.window.display.start();
       window.electron.window.settings.close();
     });
   }
@@ -207,6 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCheckboxHandlers();
     setupFactoryResetButton();
     setupExitButton();
-    setupStartMainWindowButton();
+    setupStartDisplayWindowButton();
   });
 });

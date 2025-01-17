@@ -78,6 +78,19 @@ function updateOpacity() {
     lastSlide.style.opacity = 0;
 }
 
+// Handle keyboard events
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        // Close display window on ESC
+        window.electron.window.display.close();
+    } else if (event.key === 'S' || event.key === 's' || event.key === 'P' || event.key === 'p') {
+        // Close display window and open settings on S or P
+        window.electron.window.settings.start();
+        // console.log('Settings opened');
+        window.electron.window.display.close();
+    }
+});
+
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
     fetchSlideText();
