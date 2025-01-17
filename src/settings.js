@@ -132,7 +132,18 @@ function setupExitButton() {
   const exitButton = document.getElementById('exit');
   if (exitButton) {
     exitButton.addEventListener('click', () => {
-      window.electron.closeSettingsWindow();
+      window.electron.window.settings.close();
+    });
+  }
+}
+
+// Setup handler for starting main window
+function setupStartMainWindowButton() {
+  const startMainWindowButton = document.getElementById('startMainWindow');
+  if (startMainWindowButton) {
+    startMainWindowButton.addEventListener('click', () => {
+      window.electron.window.main.start();
+      window.electron.window.settings.close();
     });
   }
 }
