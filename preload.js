@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, BrowserWindow } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 
 const electronHandler = {
     store: {
@@ -13,12 +13,12 @@ const electronHandler = {
         }
     },
     window: {
-        main: {
+        display: {
             start() {
-                ipcRenderer.send("start-main-window");
+                ipcRenderer.send("start-display-window");
             },
             close() {
-                ipcRenderer.send("close-main-window");
+                ipcRenderer.send("close-display-window");
             }
         },
         settings: {

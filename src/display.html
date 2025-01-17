@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLP Live Item Display</title>
+    <script id="textFitLib" src="textFit.js"></script>
+    <script id="viewportSizeLib" src="viewportSize.js"></script>
+    <script src="display.js"></script>
+    <style>
+        p{
+            margin: 0.3em 0em 0em 0em;
+        }
+        p:nth-of-type(1) {
+            margin: 0em 0em 0em 0em;
+        }
+         body {
+            font-family: Arial, sans-serif;
+            /* font-weight: bold; */
+            position: relative;
+            margin: 0;
+            background-color: black;
+            color: white;
+            overflow: hidden;
+            /* text-indent: 3em hanging; */
+            width: 100vw;
+            height: 100vh;
+        }
+        .slideText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 0.5em;
+            opacity: 1;
+            transition: opacity 0.2s;
+            width: calc(100% - 50px);
+            height: calc(100% - 50px);
+        }
+    </style>
+</head>
+<body>
+    <div id="slideText0" class="slideText"></div>
+    <div id="slideText1" class="slideText"></div>
+
+</body>
+</html>

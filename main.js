@@ -11,7 +11,7 @@ const __dirname  = path.dirname(__filename);
 
 const store = new Store({ schema });
 
-var settingsWindow, mainWindow;
+var settingsWindow, displayWindow;
 
 ipcMain.on("get-store", async (event, val) => {
   event.returnValue = store.get(val);
@@ -29,18 +29,18 @@ ipcMain.on("close-settings-window", async () => {
   settingsWindow.close();
 });
 
-ipcMain.on("close-main-window", async () => {
-  mainWindow.close();
+ipcMain.on("close-display-window", async () => {
+  displayWindow.close();
 });
 
-ipcMain.on("start-main-window", async () => {
-  mainWindow = createMainWindow();
+ipcMain.on("start-display-window", async () => {
+  displayWindow = createDisplayWindow();
 });
 
 
 var borderlessEnabled = (store.get('windowType') === 'Borderless');
 
-const createMainWindow = () => {
+const createDisplayWindow = () => {
     const win = new BrowserWindow({
       backgroundThrottling: false,
       width: store.get('windowSizeWidth'),
@@ -50,7 +50,7 @@ const createMainWindow = () => {
         preload: path.join(__dirname, 'preload.js')
       }
     })
-    win.loadFile('src/index.html')
+    win.loadFile('src/display.html')
     return win
 }
 
@@ -70,7 +70,7 @@ const createSettingsWindow = () => {
 
 app.whenReady().then(() => {
     if (store.get('launchToDisplay')) {
-      mainWindow = createMainWindow()
+      displayWindow = createDisplayWindow()
     } else {
       settingsWindow = createSettingsWindow()
     }
@@ -78,7 +78,7 @@ app.whenReady().then(() => {
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {
         if (store.get('launchToDisplay')) {
-          mainWindow = createMainWindow()
+          displayWindow = createDisplayWindow()
         } else {
           settingsWindow = createSettingsWindow()
         }

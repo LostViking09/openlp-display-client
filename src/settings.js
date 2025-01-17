@@ -139,7 +139,7 @@ function setupExitButton() {
 
 // Setup handler for starting main window
 function setupStartMainWindowButton() {
-  const startMainWindowButton = document.getElementById('startMainWindow');
+  const startMainWindowButton = document.getElementById('startDisplay');
   if (startMainWindowButton) {
     startMainWindowButton.addEventListener('click', () => {
       window.electron.window.main.start();
@@ -207,5 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCheckboxHandlers();
     setupFactoryResetButton();
     setupExitButton();
+    setupStartMainWindowButton();
   });
 });
