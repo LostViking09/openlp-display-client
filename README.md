@@ -1,10 +1,6 @@
 # 🎥 OpenLP Display Client
 
-<div align="center">
-
 A modern, flexible Electron-based display application for OpenLP that brings your presentations to life with seamless multi-display support and real-time updates.
-
-</div>
 
 ---
 
