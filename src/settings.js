@@ -160,6 +160,40 @@ function setupExitButton() {
   }
 }
 
+// Setup handlers for "Get current" buttons
+function setupGetCurrentButtons() {
+  const getCurrentPositionButton = document.getElementById('getCurrentPosition');
+  const getCurrentSizeButton = document.getElementById('getCurrentSize');
+
+  if (getCurrentPositionButton && getCurrentSizeButton) {
+    getCurrentPositionButton.addEventListener('click', () => {
+      const lastX = getSetting('lastWindowPositionX');
+      const lastY = getSetting('lastWindowPositionY');
+      const posX = document.getElementById('windowPositionX');
+      const posY = document.getElementById('windowPositionY');
+      if (posX && posY) {
+        posX.value = lastX;
+        posY.value = lastY;
+        window.electron.store.set('windowPositionX', lastX);
+        window.electron.store.set('windowPositionY', lastY);
+      }
+    });
+
+    getCurrentSizeButton.addEventListener('click', () => {
+      const lastWidth = getSetting('lastWindowSizeWidth');
+      const lastHeight = getSetting('lastWindowSizeHeight');
+      const width = document.getElementById('windowSizeWidth');
+      const height = document.getElementById('windowSizeHeight');
+      if (width && height) {
+        width.value = lastWidth;
+        height.value = lastHeight;
+        window.electron.store.set('windowSizeWidth', lastWidth);
+        window.electron.store.set('windowSizeHeight', lastHeight);
+      }
+    });
+  }
+}
+
 // Setup handler for starting display window
 function setupStartDisplayWindowButton() {
   const startDisplayButton = document.getElementById('startDisplay');
@@ -232,5 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFactoryResetButton();
     setupExitButton();
     setupStartDisplayWindowButton();
+    setupGetCurrentButtons();
   });
 });

@@ -42,7 +42,19 @@ ipcMain.on("close-settings-window", async () => {
 });
 
 ipcMain.on("close-display-window", async () => {
-  displayWindow.close();
+  if (displayWindow) {
+    const bounds = displayWindow.getBounds();
+    const displays = screen.getAllDisplays();
+    const selectedDisplayId = store.get('displayScreen');
+    const targetDisplay = displays[selectedDisplayId] || displays[0];
+    
+    // Store positions relative to the target display
+    store.set('lastWindowPositionX', bounds.x - targetDisplay.bounds.x);
+    store.set('lastWindowPositionY', bounds.y - targetDisplay.bounds.y);
+    store.set('lastWindowSizeWidth', bounds.width);
+    store.set('lastWindowSizeHeight', bounds.height);
+    displayWindow.close();
+  }
 });
 
 ipcMain.on("start-display-window", async () => {
@@ -51,6 +63,15 @@ ipcMain.on("start-display-window", async () => {
 
 ipcMain.on("start-settings-window", async () => {
   settingsWindow = createSettingsWindow();
+});
+
+ipcMain.on("get-display-window-bounds", (event) => {
+  if (!displayWindow) {
+    event.returnValue = null;
+    return;
+  }
+  const bounds = displayWindow.getBounds();
+  event.returnValue = bounds;
 });
 
 const createDisplayWindow = () => {

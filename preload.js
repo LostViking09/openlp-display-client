@@ -24,6 +24,9 @@ const electronHandler = {
             },
             close() {
                 ipcRenderer.send("close-display-window");
+            },
+            getBounds() {
+                return ipcRenderer.sendSync("get-display-window-bounds");
             }
         },
         settings: {

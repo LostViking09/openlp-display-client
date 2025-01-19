@@ -89,6 +89,22 @@ const settingsSchema = {
       default: 0,
       description: 'Screen number to show the display on (0 = primary screen)',
     },
+    lastWindowPositionX: {
+      type: 'number',
+      default: 100,
+    },
+    lastWindowPositionY: {
+      type: 'number',
+      default: 100,
+    },
+    lastWindowSizeWidth: {
+      type: 'number',
+      default: 800,
+    },
+    lastWindowSizeHeight: {
+      type: 'number',
+      default: 600,
+    },
   };
   
   export default settingsSchema;
