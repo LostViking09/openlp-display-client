@@ -12,6 +12,8 @@
     Position of the window on open (only on Normal or Borderless)
 * ### Window size
     Sizes of the window on open (only on Normal or Borderless)
+* ### Display Screen
+    Screen number to show the display on (0 = primary screen)
 * ### Get current size / position
     Get size / position data from currently running window
 
@@ -23,6 +25,7 @@
 * ### Static font size
     If scaling is not enabled
 * ### Dynamic font scaling
+    * Enable/Disable dynamic scaling
     * Min. font size
     * Max. font size
 * ### Colors
