@@ -84,7 +84,11 @@ const settingsSchema = {
       type: 'boolean',
       default: true,
     },
+    displayScreen: {
+      type: 'number',
+      default: 0,
+      description: 'Screen number to show the display on (0 = primary screen)',
+    },
   };
   
   export default settingsSchema;
-  

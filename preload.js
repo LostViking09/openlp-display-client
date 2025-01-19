@@ -12,6 +12,11 @@ const electronHandler = {
             ipcRenderer.send("clear-store");
         }
     },
+    displays: {
+        getAll() {
+            return ipcRenderer.sendSync("get-displays");
+        }
+    },
     window: {
         display: {
             start() {

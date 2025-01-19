@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -25,6 +25,18 @@ ipcMain.on("clear-store", async () => {
   store.clear();
 });
 
+ipcMain.on("get-displays", (event) => {
+  const displays = screen.getAllDisplays();
+  const displayInfo = displays.map((display, index) => ({
+    id: index,
+    name: display.label || `Display ${index + 1}`,
+    isPrimary: display.bounds.x === 0 && display.bounds.y === 0,
+    bounds: display.bounds,
+    size: display.size,
+  }));
+  event.returnValue = displayInfo;
+});
+
 ipcMain.on("close-settings-window", async () => {
   settingsWindow.close();
 });
@@ -42,12 +54,19 @@ ipcMain.on("start-settings-window", async () => {
 });
 
 const createDisplayWindow = () => {
+    // Get the selected display
+    const displays = screen.getAllDisplays();
+    const selectedDisplayId = store.get('displayScreen');
+    const targetDisplay = displays[selectedDisplayId] || displays[0];
+
     const win = new BrowserWindow({
       backgroundThrottling: false,
       width: store.get('windowSizeWidth'),
       height: store.get('windowSizeHeight'),
       frame: (store.get('windowType') === 'Normal') ? true : false,
       fullscreen: (store.get('windowType') === 'Fullscreen') ? true : false,
+      x: targetDisplay.bounds.x + store.get('windowPositionX'),
+      y: targetDisplay.bounds.y + store.get('windowPositionY'),
       webPreferences: {
         preload: path.join(__dirname, 'preload.js')
       }

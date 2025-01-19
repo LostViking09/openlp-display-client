@@ -62,6 +62,29 @@ function setupButtonGroupHandlers() {
   });
 }
 
+// Setup handler for display screen selector
+function setupDisplayScreenHandler() {
+  const select = document.getElementById('displayScreen');
+  if (select) {
+    // Populate options
+    const displays = window.electron.displays.getAll();
+    displays.forEach(display => {
+      const option = document.createElement('option');
+      option.value = display.id;
+      option.textContent = `${display.id + 1}. ${display.name}${display.isPrimary ? ' (Primary)' : ''}`;
+      select.appendChild(option);
+    });
+
+    // Set current value
+    select.value = getSetting('displayScreen');
+
+    // Handle changes
+    select.addEventListener('change', () => {
+      window.electron.store.set('displayScreen', parseInt(select.value, 10));
+    });
+  }
+}
+
 // Setup handlers for numeric inputs
 function setupNumericInputHandlers() {
   ['windowPositionX', 'windowPositionY', 'windowSizeWidth', 'windowSizeHeight',
@@ -201,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Setup all event handlers
     setupButtonGroupHandlers();
+    setupDisplayScreenHandler();
     setupNumericInputHandlers();
     setupTextInputHandlers();
     setupColorInputHandlers();
