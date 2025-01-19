@@ -17,7 +17,9 @@
 
 ## Text settings
 * ### Font face
-    * Bold / regular
+    Font family to use for displaying text
+* ### Always Bold
+    Force text to always be displayed in bold weight
 * ### Static font size
     If scaling is not enabled
 * ### Dynamic font scaling

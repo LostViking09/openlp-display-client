@@ -6,6 +6,14 @@
     <link rel="stylesheet" href="bulma.min.css">
     <title>Settings - OpenLP Display Client</title>
     <style>
+
+      :root {
+        --bulma-primary-h: 193deg;
+        --bulma-primary-l: 51%;
+      }
+
+
+
       body {
         margin: 2rem;
       }
@@ -101,20 +109,24 @@ input[type="color"]::-webkit-color-swatch {
       <div class="field has-addons">  
         <div class="control">
           <input class="input" type="text" id="fontFace" placeholder="Arial" />
+          <label class="checkbox">
+            <input type="checkbox" id="fontBold" />
+            Bold
+          </label>
         </div>
       </div>
 
       <label class="label">Font size (static)</label>
-      <div class="field has-addons">  
-        <div class="control">
-          <input class="input" type="number" id="staticFontSize" placeholder="40" />
-        </div>
-        <div class="control">
-          <div class="button is-static">
-            px
+        <div class="field has-addons">  
+          <div class="control">
+            <input class="input" type="number" id="staticFontSize" placeholder="40" />
+          </div>
+          <div class="control">
+            <div class="button is-static">
+              px
+            </div>
           </div>
         </div>
-      </div>
 
       <div class="field">
         <label class="label">Dynamic font sizing</label>

@@ -28,6 +28,10 @@ const settingsSchema = {
       type: 'string',
       default: 'Arial',
     },
+    alwaysBold: {
+      type: 'boolean',
+      default: false,
+    },
     staticFontSize: {
       type: 'number',
       default: 40,

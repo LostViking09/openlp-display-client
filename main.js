@@ -41,15 +41,13 @@ ipcMain.on("start-settings-window", async () => {
   settingsWindow = createSettingsWindow();
 });
 
-
-var borderlessEnabled = (store.get('windowType') === 'Borderless');
-
 const createDisplayWindow = () => {
     const win = new BrowserWindow({
       backgroundThrottling: false,
       width: store.get('windowSizeWidth'),
       height: store.get('windowSizeHeight'),
-      frame: !borderlessEnabled,
+      frame: (store.get('windowType') === 'Normal') ? true : false,
+      fullscreen: (store.get('windowType') === 'Fullscreen') ? true : false,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js')
       }
