@@ -12,6 +12,22 @@
         --bulma-primary-l: 51%;
       }
 
+      .kbd {
+        display: inline-block;
+        padding: 3px 5px;
+        font-size: 11px;
+        line-height: 10px;
+        color: #444d56;
+        vertical-align: middle;
+        background-color: #fafbfc;
+        border: solid 1px #c6cbd1;
+        border-bottom-color: #959da5;
+        border-radius: 3px;
+        box-shadow: inset 0 -1px 0 #959da5;
+        font-family: monospace;
+        font-weight: bold;
+      }
+
 
 
       body {
@@ -280,6 +296,21 @@ input[type="color"]::-webkit-color-swatch {
           <button class="button is-danger is-dark is-small js-modal-trigger" data-target="modal-factoryDefaults" id="factoryDefaults">
             Reset all settings to factory defaults
           </button>
+        </div>
+      </div>
+
+      <div class="notification mt-5">
+        <h6 class="title is-6 has-text-centered mb-3">Display Keyboard Shortcuts</h6>
+        <div class="tags is-centered">
+          <span class="tag">
+            <span class="kbd">Esc</span>&nbsp;to quit
+          </span>
+          <span class="tag">
+            <span class="kbd">S</span>&nbsp;or&nbsp;<span class="kbd">P</span>&nbsp;to settings
+          </span>
+          <span class="tag">
+            <span class="kbd">F11</span>&nbsp;for fullscreen
+          </span>
         </div>
       </div>
 
