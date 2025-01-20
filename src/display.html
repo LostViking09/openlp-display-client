@@ -7,14 +7,17 @@
     <script id="textFitLib" src="textFit.js"></script>
     <script id="viewportSizeLib" src="viewportSize.js"></script>
     <style>
+        
+        /* Line height styling */
         p{
             margin: 0.3em 0em 0em 0em;
         }
         p:nth-of-type(1) {
             margin: 0em 0em 0em 0em;
         }
-         body {
-            font-family: Arial, sans-serif;
+
+        body {
+            /* font-family: Arial, sans-serif; */
             /* font-weight: bold; */
             position: relative;
             margin: 0;
@@ -32,10 +35,11 @@
             transform: translate(-50%, -50%);
             padding: 0.5em;
             opacity: 1;
-            transition: opacity 0.2s;
+            /* transition: opacity 0.2s; */
             width: calc(100% - 50px);
             height: calc(100% - 50px);
         }
+
         body.cursor-hidden {
             cursor: none;
         }

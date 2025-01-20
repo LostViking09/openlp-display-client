@@ -1,9 +1,5 @@
-import settingsSchema from '../settingsSchema.js';
-
-// Helper to get setting with fallback to schema default
 function getSetting(key) {
-  const value = window.electron.store.get(key);
-  return value !== undefined ? value : settingsSchema[key].default;
+  return window.electron.store.get(key);
 }
 
 // Helper to set active state for button groups
@@ -129,7 +125,7 @@ function setupColorInputHandlers() {
 // Setup handlers for checkboxes
 function setupCheckboxHandlers() {
   ['dynamicFontScalingEnabled', 'showConnectionLostMessages',
-   'showSuccessfulConnectionMessages'].forEach(key => {
+   'showSuccessfulConnectionMessages', 'alwaysBold'].forEach(key => {
     const input = document.getElementById(key);
     if (input) {
       input.addEventListener('change', () => {
@@ -249,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load checkboxes
     ['dynamicFontScalingEnabled', 'showConnectionLostMessages',
-     'showSuccessfulConnectionMessages'].forEach(key => {
+     'showSuccessfulConnectionMessages', 'alwaysBold'].forEach(key => {
       const input = document.getElementById(key);
       if (input) {
         input.checked = getSetting(key);
