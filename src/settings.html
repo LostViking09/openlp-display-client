@@ -257,6 +257,24 @@ input[type="color"]::-webkit-color-swatch {
       </div>
 
       <div class="field">
+        <div class="control">
+          <label class="checkbox">
+            <input type="checkbox" id="showConnectionLostMessages" />
+            Show notification when connection is lost
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <label class="checkbox">
+            <input type="checkbox" id="showSuccessfulConnectionMessages" />
+            Show notification when connection is restored
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
         <label class="label">Factory defaults</label>
         <div class="control">
           <button class="button is-danger is-dark is-small js-modal-trigger" data-target="modal-factoryDefaults" id="factoryDefaults">

@@ -4,13 +4,20 @@ const serverIP = window.electron.store.get('serverIP');
 const serverWebSocketPort = window.electron.store.get('serverWebSocketPort');
 const serverHttpPort = window.electron.store.get('serverHttpPort');
 const blankOnConnectionLost = window.electron.store.get('blankOnConnectionLost');
+const showConnectionLostMessages = window.electron.store.get('showConnectionLostMessages');
+const showSuccessfulConnectionMessages = window.electron.store.get('showSuccessfulConnectionMessages');
+let hasShownConnectionLostMessage = false;
+let initialConnection = true;
 const http_api_url = "/api/v2/controller/live-item";
 let ws; // WebSocket instance
 let connectionLostTimer = null; // Timer for connection lost blanking
+let notificationTimer = null; // Timer for connection lost notification
 let wsConnected = false; // Track WebSocket connection status
 let httpConnected = false; // Track HTTP connection status
 const slideText0 = document.getElementById('slideText0');
 const slideText1 = document.getElementById('slideText1');
+const statusBar = document.getElementById('statusBar');
+const statusText = document.getElementById('statusText');
 
 const dynamicFontScalingMin = window.electron.store.get('dynamicFontScalingMin');
 const dynamicFontScalingMax = window.electron.store.get('dynamicFontScalingMax');
@@ -36,25 +43,76 @@ function setStyling(){
     slideText1.style.transition = `opacity ${fadeTime}`;
 }
 
+function showStatus(message, isError = true) {
+    // Check appropriate setting before showing status
+    if ((isError && !showConnectionLostMessages) || 
+        (!isError && !showSuccessfulConnectionMessages)) {
+        return;
+    }
+
+    statusBar.classList.toggle('is-danger', isError);
+    statusBar.classList.toggle('is-success', !isError);
+    statusText.innerHTML = message;
+    statusBar.classList.add('visible');
+    
+    // Auto-hide success messages after 3 seconds
+    if (!isError) {
+        setTimeout(() => {
+            statusBar.classList.remove('visible');
+        }, 3000);
+    }
+}
+
 function startConnectionLostTimer() {
+    // Handle screen blanking timer
     if (blankOnConnectionLost > 0 && !connectionLostTimer) {
         connectionLostTimer = setTimeout(() => {
             screenBlanked = true;
             updateOpacity();
+            // Show status immediately with screen blanking
+            if (!wsConnected || !httpConnected) {
+                showStatus(`Connection lost to OpenLP server at <code>${serverIP}</code>`, true);
+                hasShownConnectionLostMessage = true;
+            }
         }, blankOnConnectionLost * 1000);
+    }
+    
+    // Handle status timer when screen blanking is disabled
+    if (blankOnConnectionLost === 0 && !notificationTimer) {
+        notificationTimer = setTimeout(() => {
+            if (!wsConnected || !httpConnected) {
+                showStatus(`Connection lost to OpenLP server at <code>${serverIP}</code>`, true);
+                hasShownConnectionLostMessage = true;
+            }
+        }, 10000); // 10 seconds
     }
 }
 
 function clearConnectionLostTimer() {
+    // Clear screen blanking timer
     if (connectionLostTimer) {
         clearTimeout(connectionLostTimer);
         connectionLostTimer = null;
     }
+    // Clear status timer
+    if (notificationTimer) {
+        clearTimeout(notificationTimer);
+        notificationTimer = null;
+    }
     // If both connections are working and screen was blanked, unblank it
-    if (wsConnected && httpConnected && screenBlanked && !connectionLostTimer) {
-        screenBlanked = false;
-        updateOpacity();
-        fetchSlideText();
+    if (wsConnected && httpConnected) {
+        if (screenBlanked && !connectionLostTimer) {
+            screenBlanked = false;
+            updateOpacity();
+            fetchSlideText();
+        }
+        
+        // Show success message on initial connection or after connection loss
+        if (initialConnection || hasShownConnectionLostMessage) {
+            showStatus(`Successfully connected to OpenLP server at <code class="has-text-success">${serverIP}</code>`, false);
+            initialConnection = false;
+            hasShownConnectionLostMessage = false;
+        }
     }
 }
 
@@ -70,6 +128,7 @@ async function wsConnect() {
 
     ws.onclose = () => {
         wsConnected = false;
+        initialConnection = false; // No longer initial connection after a disconnect
         startConnectionLostTimer();
         // Try to reconnect
         setTimeout(wsConnect, 1000);
