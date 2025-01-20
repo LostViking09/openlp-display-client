@@ -78,6 +78,38 @@ function updateOpacity() {
     lastSlide.style.opacity = 0;
 }
 
+// Cursor hiding functionality
+let cursorTimeout;
+const CURSOR_HIDE_DELAY = 3000; // 3 seconds
+
+function showCursor() {
+    document.body.classList.remove('cursor-hidden');
+}
+
+function hideCursor() {
+    document.body.classList.add('cursor-hidden');
+}
+
+function resetCursorTimer() {
+    if (document.hasFocus()) {
+        showCursor();
+        clearTimeout(cursorTimeout);
+        cursorTimeout = setTimeout(hideCursor, CURSOR_HIDE_DELAY);
+    } else {
+        hideCursor();
+    }
+}
+
+// Handle mouse movement
+document.addEventListener('mousemove', resetCursorTimer);
+
+// Handle window focus events
+window.addEventListener('focus', resetCursorTimer);
+window.addEventListener('blur', hideCursor);
+
+// Initialize cursor timer
+resetCursorTimer();
+
 // Handle keyboard events
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
