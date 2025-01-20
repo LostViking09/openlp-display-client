@@ -92,7 +92,8 @@ const createDisplayWindow = () => {
         preload: path.join(__dirname, 'preload.js')
       }
     })
-    win.loadFile('src/display.html')
+    win.loadFile('src/display.html');
+    win.menuBarVisible = false;
     return win
 }
 
@@ -106,7 +107,8 @@ const createSettingsWindow = () => {
         preload: path.join(__dirname, 'preload.js')
       }
     })
-    win.loadFile('src/settings.html')
+    win.loadFile('src/settings.html');
+    win.menuBarVisible = false;
     return win
 }
 
