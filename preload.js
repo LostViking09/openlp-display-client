@@ -37,6 +37,9 @@ const electronHandler = {
                 ipcRenderer.send("close-settings-window");
             }
         }
+    },
+    getFonts() {
+        return ipcRenderer.invoke("get-fonts");
     }
 
 };

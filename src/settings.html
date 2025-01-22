@@ -133,9 +133,15 @@ input[type="color"]::-webkit-color-swatch {
       </div>
 
       <label class="label">Font face</label>
-      <div class="field has-addons">  
+      <div class="field">  
         <div class="control">
-          <input class="input" type="text" id="fontFace" placeholder="Arial" />
+          <div class="select is-fullwidth">
+            <select id="fontFace">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+        </div>
+        <div class="control mt-2">
           <label class="checkbox">
             <input type="checkbox" id="alwaysBold" />
             Always Bold

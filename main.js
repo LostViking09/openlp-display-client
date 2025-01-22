@@ -5,6 +5,7 @@ import path from 'node:path';
 
 import Store from 'electron-store';
 import schema from './settingsSchema.js'
+import fontList from 'font-list';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -12,6 +13,16 @@ const __dirname  = path.dirname(__filename);
 const store = new Store({ schema });
 
 var settingsWindow, displayWindow;
+
+ipcMain.handle("get-fonts", async () => {
+  try {
+    const fonts = await fontList.getFonts();
+    return fonts;
+  } catch (error) {
+    console.error('Error getting system fonts:', error);
+    return [];
+  }
+});
 
 ipcMain.on("get-store", async (event, val) => {
   event.returnValue = store.get(val);

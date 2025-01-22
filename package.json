@@ -17,6 +17,7 @@
     "globals": "^15.14.0"
   },
   "dependencies": {
-    "electron-store": "^10.0.0"
+    "electron-store": "^10.0.0",
+    "font-list": "^1.5.1"
   }
 }

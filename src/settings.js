@@ -98,9 +98,50 @@ function setupNumericInputHandlers() {
   });
 }
 
+// Setup font face selector
+async function setupFontFaceHandler() {
+  const fontSelect = document.getElementById('fontFace');
+  if (fontSelect) {
+    try {
+      // Get system fonts
+      const fonts = await window.electron.getFonts();
+      
+      // Add fonts to select
+      fonts.forEach(font => {
+        const option = document.createElement('option');
+        // Remove quotes if present
+        const fontName = font.replace(/^"|"$/g, '');
+        option.value = fontName;
+        option.textContent = fontName;
+        option.style.fontFamily = fontName;
+        fontSelect.appendChild(option);
+      });
+
+      // Set current value
+      fontSelect.value = getSetting('fontFace');
+
+      // Update select element's font style
+      const updateFontSelectStyle = () => {
+        fontSelect.style.fontFamily = fontSelect.value;
+      };
+
+      // Set initial font style
+      updateFontSelectStyle();
+
+      // Handle changes
+      fontSelect.addEventListener('change', () => {
+        window.electron.store.set('fontFace', fontSelect.value);
+        updateFontSelectStyle();
+      });
+    } catch (error) {
+      console.error('Error loading system fonts:', error);
+    }
+  }
+}
+
 // Setup handlers for text inputs
 function setupTextInputHandlers() {
-  ['fontFace', 'serverIP', 'serverHttpPort', 'serverWebSocketPort'].forEach(key => {
+  ['serverIP', 'serverHttpPort', 'serverWebSocketPort'].forEach(key => {
     const input = document.getElementById(key);
     if (input) {
       input.addEventListener('change', () => {
@@ -257,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupDisplayScreenHandler();
     setupNumericInputHandlers();
     setupTextInputHandlers();
+    setupFontFaceHandler();
     setupColorInputHandlers();
     setupCheckboxHandlers();
     setupFactoryResetButton();
