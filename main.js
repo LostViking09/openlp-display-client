@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, shell } from 'electron';
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -105,6 +105,10 @@ const createDisplayWindow = () => {
     })
     win.loadFile('src/display.html');
     win.menuBarVisible = false;
+    win.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    });
     return win
 }
 
@@ -120,6 +124,10 @@ const createSettingsWindow = () => {
     })
     win.loadFile('src/settings.html');
     win.menuBarVisible = false;
+    win.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    });
     return win
 }
 

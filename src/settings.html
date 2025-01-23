@@ -231,7 +231,7 @@ input[type="color"]::-webkit-color-swatch {
         </div>
       </div>
 
-      <label class="label">Image handling</label>
+      <label class="label">Image handling <button class="tag is-rounded is-small has-text-weight-bold is-link is-hoverable js-modal-trigger" data-target="modal-imageHandling">?</button></label>
       <div class="field has-addons">
         <div class="control">
           <button class="button" id="imageHandling_blank">Blank screen</button>
@@ -345,6 +345,64 @@ input[type="color"]::-webkit-color-swatch {
             <div class="buttons">
               <button class="button is-danger is-dark" id="factoryReset" >Factory defaults</button>
               <button class="button">Cancel</button>
+            </div>
+          </footer>
+        </div>
+      </div>
+
+      <div class="modal" id="modal-imageHandling">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Handling images</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="content">
+              <h5 class="title is-5">Understanding Image Handling</h5>
+              <p>OpenLP Display Client uses the web-based remote plugin as its data source. However, there are some limitations:</p>
+              <p>The remote plugin does not provide direct access to raw image data on slides. The only available solution is requesting a screenshot of the slide display from OpenLP.</p>
+
+              <h6 class="title is-6 mt-5">Current Limitations</h6>
+              <ul>
+                <li>OpenLP must actively display the slide, requiring either:
+                  <ul>
+                    <li>Two monitors, or</li>
+                    <li>Virtual Display Driver (<a href="https://vdd.mikethetech.com/" target="_blank">vdd.mikethetech.com</a>)</li>
+                  </ul>
+                </li>
+                <li>Screenshots maintain screen dimensions, potentially including black bars</li>
+              </ul>
+
+              <h6 class="title is-6">Setting Up Virtual Display Driver</h6>
+              <ol>
+                <li>Download the latest Virtual Display Driver from <a class="is-primary" href="https://github.com/VirtualDisplay/Virtual-Display-Driver/releases/latest" target="_blank">GitHub</a><br>
+                    Look for: <code class="has-text-white">Virtual.Display.Driver-v[...]-setup-x64.exe</code>
+                </li>
+                <li>During installation, select 'Complete installation with all components'</li>
+                <li>After installation launch the Companion App</li>
+                <li>Control the virtual display via the tray icon:
+                  <ul>
+                    <li>Right-click to Enable/Disable Driver</li>
+                    <li>Optional: Enable 'Start on Startup' to always have Companion available</li>
+                  </ul>
+                </li>
+              </ol>
+
+              <h6 class="title is-6 mt-5">Configuring Custom Resolution</h6>
+              <p>Match the Virtual Display resolution to your OpenLP Display Client for optimal image fitting:</p>
+              <ol>
+                <li>Navigate to <code class="has-text-white">C:\VirtualDisplayDriver</code></li>
+                <li>Open <code class="has-text-white">vdd_settings.xml</code> in a text editor</li>
+                <li>Add or modify resolution settings</li>
+                <li>Save the file</li>
+                <li>Click 'Reload Settings' in the VDD tray icon menu</li>
+              </ol>
+            </div>
+          </section>
+          <footer class="modal-card-foot">
+            <div class="buttons">
+              <button class="button is-primary" id="imageHandling_close">Got it</button>
             </div>
           </footer>
         </div>
