@@ -1,9 +1,9 @@
 /* global textFit */
 
 const serverIP = window.electron.store.get('serverIP');
-const serverWebSocketPort = window.electron.store.get('serverWebSocketPort');
 const serverHttpPort = window.electron.store.get('serverHttpPort');
 const blankOnConnectionLost = window.electron.store.get('blankOnConnectionLost');
+let serverWebSocketPort = null;
 const showConnectionLostMessages = window.electron.store.get('showConnectionLostMessages');
 const showSuccessfulConnectionMessages = window.electron.store.get('showSuccessfulConnectionMessages');
 const imageHandling = window.electron.store.get('imageHandling');
@@ -117,7 +117,25 @@ function clearConnectionLostTimer() {
     }
 }
 
+async function getWebSocketPort() {
+    try {
+        const response = await fetch(`http://${serverIP}:${serverHttpPort}/api/v2/core/system`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.websocket_port;
+    } catch (error) {
+        console.log('Error fetching websocket port:', error);
+        // Fallback to stored value if API call fails
+        return window.electron.store.get('serverWebSocketPort');
+    }
+}
+
 async function wsConnect() {
+    if (!serverWebSocketPort) {
+        serverWebSocketPort = await getWebSocketPort();
+    }
     ws = new WebSocket('ws://' + serverIP + ':' + serverWebSocketPort);
     
     ws.onopen = () => {
