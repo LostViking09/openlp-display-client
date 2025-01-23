@@ -98,9 +98,17 @@ function setupDisplayScreenHandler() {
 
 // Setup handlers for numeric inputs
 function setupNumericInputHandlers() {
-  ['windowPositionX', 'windowPositionY', 'windowSizeWidth', 'windowSizeHeight',
-   'staticFontSize', 'dynamicFontScalingMin', 'dynamicFontScalingMax',
-   'fadeTime', 'blankOnConnectionLost'].forEach(key => {
+  [
+    'windowPositionX',
+    'windowPositionY',
+    'windowSizeWidth',
+    'windowSizeHeight',
+    'staticFontSize',
+    'dynamicFontScalingMin',
+    'dynamicFontScalingMax',
+    'fadeTime',
+    'blankOnConnectionLost'
+  ].forEach(key => {
     const input = document.getElementById(key);
     if (input) {
       input.addEventListener('change', () => {
@@ -180,8 +188,12 @@ function setupColorInputHandlers() {
 
 // Setup handlers for checkboxes
 function setupCheckboxHandlers() {
-  ['dynamicFontScalingEnabled', 'showConnectionLostMessages',
-   'showSuccessfulConnectionMessages', 'alwaysBold'].forEach(key => {
+  [
+    'dynamicFontScalingEnabled',
+    'showConnectionLostMessages',
+    'showSuccessfulConnectionMessages',
+    'alwaysBold'
+  ].forEach(key => {
     const input = document.getElementById(key);
     if (input) {
       input.addEventListener('change', () => {
@@ -281,9 +293,17 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Load numeric inputs
-    ['windowPositionX', 'windowPositionY', 'windowSizeWidth', 'windowSizeHeight',
-     'staticFontSize', 'dynamicFontScalingMin', 'dynamicFontScalingMax',
-     'fadeTime', 'blankOnConnectionLost'].forEach(key => {
+    [
+      'windowPositionX',
+      'windowPositionY',
+      'windowSizeWidth',
+      'windowSizeHeight',
+      'staticFontSize',
+      'dynamicFontScalingMin',
+      'dynamicFontScalingMax',
+      'fadeTime',
+      'blankOnConnectionLost'
+    ].forEach(key => {
       const input = document.getElementById(key);
       if (input) {
         input.value = getSetting(key);
@@ -307,8 +327,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Load checkboxes
-    ['dynamicFontScalingEnabled', 'showConnectionLostMessages',
-     'showSuccessfulConnectionMessages', 'alwaysBold'].forEach(key => {
+    [
+      'dynamicFontScalingEnabled',
+      'showConnectionLostMessages',
+      'showSuccessfulConnectionMessages',
+      'alwaysBold'
+    ].forEach(key => {
       const input = document.getElementById(key);
       if (input) {
         input.checked = getSetting(key);

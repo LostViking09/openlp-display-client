@@ -9,7 +9,7 @@ const showSuccessfulConnectionMessages = window.electron.store.get('showSuccessf
 const imageHandling = window.electron.store.get('imageHandling');
 let hasShownConnectionLostMessage = false;
 let initialConnection = true;
-const http_api_url = "/api/v2/controller/live-item";
+const http_api_url = '/api/v2/controller/live-item';
 let ws; // WebSocket instance
 let connectionLostTimer = null; // Timer for connection lost blanking
 let notificationTimer = null; // Timer for connection lost notification
@@ -23,15 +23,14 @@ const statusText = document.getElementById('statusText');
 const dynamicFontScalingMin = window.electron.store.get('dynamicFontScalingMin');
 const dynamicFontScalingMax = window.electron.store.get('dynamicFontScalingMax');
 
-var currentSlide = slideText0;
-var lastSlide    = slideText1;
-var useSecondSlideDiv = false; // selects which div is shown (for transitions)
-var currentSlideHTML = "" // stores the current html to check for changes
-var screenBlanked = false // true if display is blanked
+let currentSlide = slideText0;
+let lastSlide = slideText1;
+let useSecondSlideDiv = false; // selects which div is shown (for transitions)
+let currentSlideHTML = ''; // stores the current html to check for changes
+let screenBlanked = false; // true if display is blanked
 
 // Init functions
-
-function setStyling(){
+function setStyling() {
     document.body.style.fontFamily = window.electron.store.get('fontFace');
     document.body.style.fontWeight = window.electron.store.get('alwaysBold') ? 'bold' : 'normal';
     if (!window.electron.store.get('dynamicFontScalingEnabled')) {
@@ -136,7 +135,7 @@ async function wsConnect() {
     if (!serverWebSocketPort) {
         serverWebSocketPort = await getWebSocketPort();
     }
-    ws = new WebSocket('ws://' + serverIP + ':' + serverWebSocketPort);
+    ws = new WebSocket(`ws://${serverIP}:${serverWebSocketPort}`);
     
     ws.onopen = () => {
         wsConnected = true;
@@ -157,11 +156,11 @@ async function wsConnect() {
         const reader = new FileReader();
         reader.onload = () => {
             const state = JSON.parse(reader.result.toString()).results;
-            if (screenBlanked != state.blank){
+            if (screenBlanked !== state.blank) {
                 if (!state.blank) {
-                    slideText0.innerHTML = "";
-                    slideText1.innerHTML="";
-                    currentSlideHTML="";
+                    slideText0.innerHTML = '';
+                    slideText1.innerHTML = '';
+                    currentSlideHTML = '';
                     screenBlanked = state.blank;
                     fetchSlideText();
                 } else { 
@@ -171,12 +170,12 @@ async function wsConnect() {
             }
         };
         reader.readAsText(event.data);
-    }
+    };
 }
 
 async function fetchScreenshot() {
     try {
-        const response = await fetch('http://' + serverIP + ':' + serverHttpPort + '/api/v2/core/live-image');
+        const response = await fetch(`http://${serverIP}:${serverHttpPort}/api/v2/core/live-image`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -194,7 +193,7 @@ async function fetchSlideText() {
     let wasHttpConnected = httpConnected;
     
     try {
-        const response = await fetch('http://' + serverIP + ':' + serverHttpPort + http_api_url);
+        const response = await fetch(`http://${serverIP}:${serverHttpPort}${http_api_url}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -238,9 +237,8 @@ async function fetchSlideText() {
         // Not an image slide, handle as normal text slide
         if (data.slides && data.slides.length > 0 && data.slides[0].text) {
             let slideHTML = data.slides[0].html;
-            slideHTML = '<p>' + slideHTML.replaceAll('<br>','<p>');
-            if (currentSlideHTML != slideHTML) {
-                console.log('difff');
+            slideHTML = '<p>' + slideHTML.replaceAll('<br>', '<p>');
+            if (currentSlideHTML !== slideHTML) {
                 currentSlide.innerHTML = slideHTML;
                 currentSlideHTML = slideHTML;
                 screenBlanked = false;
@@ -255,8 +253,16 @@ async function fetchSlideText() {
         if (data.name !== 'images') {
             currentSlide.classList.remove('image-mode');
             lastSlide.classList.remove('image-mode');
-            textFit(slideText0, {minFontSize: dynamicFontScalingMin, maxFontSize: dynamicFontScalingMax, multiLine: true});
-            textFit(slideText1, {minFontSize: dynamicFontScalingMin, maxFontSize: dynamicFontScalingMax, multiLine: true});
+            textFit(slideText0, {
+                minFontSize: dynamicFontScalingMin,
+                maxFontSize: dynamicFontScalingMax,
+                multiLine: true
+            });
+            textFit(slideText1, {
+                minFontSize: dynamicFontScalingMin,
+                maxFontSize: dynamicFontScalingMax,
+                multiLine: true
+            });
         }
     } catch (error) {
         console.log(error);
@@ -320,7 +326,6 @@ document.addEventListener('keydown', (event) => {
     } else if (event.key === 'S' || event.key === 's' || event.key === 'P' || event.key === 'p') {
         // Close display window and open settings on S or P
         window.electron.window.settings.start();
-        // console.log('Settings opened');
         window.electron.window.display.close();
     }
 });
