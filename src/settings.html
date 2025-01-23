@@ -1,12 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="bulma.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="bulma.min.css" />
     <title>Settings - OpenLP Display Client</title>
     <style>
-
       :root {
         --bulma-primary-h: 193deg;
         --bulma-primary-l: 51%;
@@ -28,393 +27,510 @@
         font-weight: bold;
       }
 
-
-
       body {
         margin: 2rem;
       }
 
       input[type="color"] {
-  width: 5em; 
-  height: 3em;
-  margin: 0;
-  padding: var(--bulma-control-padding-vertical) var(--bulma-control-padding-horizontal);
-  border-width: var(--bulma-control-border-width);
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: var(--bulma-burger-border-radius);
-  border-bottom-right-radius: var(--bulma-burger-border-radius);
-  border-color: var(--bulma-border);
-  overflow: hidden;
-  background-color: var(--bulma-background);
-}
+        width: 5em;
+        height: 3em;
+        margin: 0;
+        padding: var(--bulma-control-padding-vertical)
+          var(--bulma-control-padding-horizontal);
+        border-width: var(--bulma-control-border-width);
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-top-right-radius: var(--bulma-burger-border-radius);
+        border-bottom-right-radius: var(--bulma-burger-border-radius);
+        border-color: var(--bulma-border);
+        overflow: hidden;
+        background-color: var(--bulma-background);
+      }
 
-input[type="color"]::-webkit-color-swatch-wrapper {
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: var(--bulma-burger-border-radius);
-}
+      input[type="color"]::-webkit-color-swatch-wrapper {
+        margin: 0;
+        padding: 0;
+        border: none;
+        border-radius: var(--bulma-burger-border-radius);
+      }
 
-input[type="color"]::-webkit-color-swatch {
-  margin: 0;
-  padding: 0;
-  border: none;
-  border: none;
-  border-radius: var(--bulma-burger-border-radius);
-}
-
+      input[type="color"]::-webkit-color-swatch {
+        margin: 0;
+        padding: 0;
+        border: none;
+        border: none;
+        border-radius: var(--bulma-burger-border-radius);
+      }
     </style>
     <script type="module" src="settings.js"></script>
     <script type="module" src="modal.js"></script>
-</head>
-<body class="has-navbar-fixed-bottom">
+  </head>
+  <body class="has-navbar-fixed-bottom">
+    <div class="field">
+      <section
+        class="hero is-small is-primary"
+        style="border-radius: var(--bulma-control-radius)"
+      >
+        <div class="hero-body">
+          <p class="title">OpenLP Display Client</p>
+          <p class="subtitle">Settings & Configuration</p>
+        </div>
+      </section>
+    </div>
 
-      <label class="label">Startup</label>
+    <label class="label">Startup</label>
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <button class="button is-fullwidth" id="launchToDisplay_settings">
+          Settings panel
+        </button>
+      </div>
+      <div class="control is-expanded">
+        <button class="button is-fullwidth" id="launchToDisplay_display">
+          Live display window
+        </button>
+      </div>
+    </div>
+
+    <label class="label">Window Type</label>
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <button class="button is-fullwidth" id="windowType_normal">
+          Normal
+        </button>
+      </div>
+      <div class="control is-expanded">
+        <button class="button is-fullwidth" id="windowType_borderless">
+          Borderless
+        </button>
+      </div>
+      <div class="control is-expanded">
+        <button class="button is-fullwidth" id="windowType_fullscreen">
+          Fullscreen
+        </button>
+      </div>
+    </div>
+
+    <label class="label">Display Screen</label>
+    <div class="field">
+      <div class="control is-expanded">
+        <div class="select is-fullwidth">
+          <select id="displayScreen">
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <label class="label">Window position (X, Y)</label>
+    <div class="field is-grouped">
+      <div class="control is-expanded">
+        <input
+          class="input"
+          type="number"
+          id="windowPositionX"
+          placeholder="100"
+        />
+      </div>
+      <div class="control is-expanded">
+        <input
+          class="input"
+          type="number"
+          id="windowPositionY"
+          placeholder="100"
+        />
+      </div>
+      <button class="button" id="getCurrentPosition">Get last used</button>
+    </div>
+
+    <label class="label">Window size (width, height)</label>
+    <div class="field is-grouped">
+      <div class="control is-expanded">
+        <input
+          class="input"
+          type="number"
+          id="windowSizeWidth"
+          placeholder="800"
+        />
+      </div>
+      <div class="control is-expanded">
+        <input
+          class="input"
+          type="number"
+          id="windowSizeHeight"
+          placeholder="600"
+        />
+      </div>
+      <button class="button" id="getCurrentSize">Get last used</button>
+    </div>
+
+    <label class="label">Font face</label>
+    <div class="field">
+      <div class="control is-expanded">
+        <div class="select is-fullwidth">
+          <select id="fontFace">
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+      </div>
+      <div class="control mt-2">
+        <label class="checkbox">
+          <input type="checkbox" id="alwaysBold" />
+          Always Bold
+        </label>
+      </div>
+    </div>
+
+    <label class="label">Font size (static)</label>
+    <div class="field has-addons">
+      <div class="control">
+        <input
+          class="input"
+          type="number"
+          id="staticFontSize"
+          placeholder="40"
+        />
+      </div>
+      <div class="control">
+        <div class="button is-static">px</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Dynamic font sizing</label>
+      <div class="control">
+        <label class="checkbox">
+          <input type="checkbox" id="dynamicFontScalingEnabled" />
+          Fill screen with text by dynamically changing its size
+        </label>
+      </div>
+    </div>
+
+    <label class="label">Dynamic font size range</label>
+    <div class="field is-grouped">
       <div class="field has-addons">
         <div class="control">
-          <button class="button" id="launchToDisplay_settings">Settings panel</button>
+          <div class="button is-static">Min:</div>
         </div>
         <div class="control">
-          <button class="button" id="launchToDisplay_display">Live display window</button>
+          <input
+            class="input"
+            type="number"
+            id="dynamicFontScalingMin"
+            placeholder="10"
+          />
         </div>
       </div>
-
-      <label class="label">Window Type</label>
       <div class="field has-addons">
         <div class="control">
-          <button class="button" id="windowType_normal">
-            Normal
-          </button>
+          <div class="button is-static">Max:</div>
         </div>
         <div class="control">
-          <button class="button" id="windowType_borderless">
-            Borderless
-          </button>
-        </div>
-        <div class="control">
-          <button class="button" id="windowType_fullscreen">
-            Fullscreen
-          </button>
+          <input
+            class="input"
+            type="number"
+            id="dynamicFontScalingMax"
+            placeholder="24"
+          />
         </div>
       </div>
+    </div>
 
-      <label class="label">Display Screen</label>
-      <div class="field">
-        <div class="control">
-          <div class="select">
-            <select id="displayScreen">
-              <!-- Options will be populated by JavaScript -->
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <label class="label">Window position (X, Y)</label>
-      <div class="field is-grouped">
-        <div class="control">
-          <input class="input" type="number" id="windowPositionX" placeholder="100" />
-        </div>
-        <div class="control">
-          <input class="input" type="number" id="windowPositionY" placeholder="100" />
-        </div>
-        <button class="button" id="getCurrentPosition">Get last used</button>
-      </div>
-
-      <label class="label">Window size (width, height)</label>
-      <div class="field is-grouped">
-        <div class="control">
-          <input class="input" type="number" id="windowSizeWidth" placeholder="800" />
-        </div>
-        <div class="control">
-          <input class="input" type="number" id="windowSizeHeight" placeholder="600" />
-        </div>
-        <button class="button" id="getCurrentSize">Get last used</button>
-      </div>
-
-      <label class="label">Font face</label>
-      <div class="field">  
-        <div class="control">
-          <div class="select is-fullwidth">
-            <select id="fontFace">
-              <!-- Options will be populated by JavaScript -->
-            </select>
-          </div>
-        </div>
-        <div class="control mt-2">
-          <label class="checkbox">
-            <input type="checkbox" id="alwaysBold" />
-            Always Bold
-          </label>
-        </div>
-      </div>
-
-      <label class="label">Font size (static)</label>
-        <div class="field has-addons">  
-          <div class="control">
-            <input class="input" type="number" id="staticFontSize" placeholder="40" />
-          </div>
-          <div class="control">
-            <div class="button is-static">
-              px
-            </div>
-          </div>
-        </div>
-
-      <div class="field">
-        <label class="label">Dynamic font sizing</label>
-        <div class="control">
-          <label class="checkbox">
-            <input type="checkbox" id="dynamicFontScalingEnabled" />
-            Fill screen with text by dynamically changing its size
-          </label>
-        </div>
-      </div>
-
-      <label class="label">Dynamic font size range</label>
-      <div class="field is-grouped">
-        <div class="field has-addons">
-          <div class="control">
-            <div class="button is-static">
-              Min: 
-            </div>
-          </div>
-          <div class="control">
-            <input class="input" type="number" id="dynamicFontScalingMin" placeholder="10" />
-          </div>
-        </div>
-        <div class="field has-addons">
-          <div class="control">
-            <div class="button is-static">
-              Max: 
-            </div>
-          </div>
-          <div class="control">
-            <input class="input" type="number" id="dynamicFontScalingMax" placeholder="24" />
-          </div>
-        </div>
-      </div>
-
-      <label class="label">Colors</label>
-      <div class="field is-grouped">
-        <div class="field has-addons">
-          <div class="control">
-            <div class="button is-static">
-              Text Color: 
-            </div>
-          </div>
-          <div class="control">
-            <input type="color" id="textColor" value="#FFFFFF" />
-          </div>
-        </div>
-        <div class="field has-addons">
-          <div class="control">
-            <div class="button is-static">
-              Background Color: 
-            </div>
-          </div>
-          <div class="control">
-            <input type="color" id="backgroundColor" value="#000000" />
-          </div>
-        </div>
-      </div>
-
-      <label class="label">Fade time</label>
-      <div class="field has-addons">  
-        <div class="control">
-          <input class="input" type="number" id="fadeTime" placeholder="0.2" />
-        </div>
-        <div class="control">
-          <div class="button is-static">
-            seconds
-          </div>
-        </div>
-      </div>
-
-      <label class="label">Image handling <button class="tag is-rounded is-small has-text-weight-bold is-link is-hoverable js-modal-trigger" data-target="modal-imageHandling">?</button></label>
+    <label class="label">Colors</label>
+    <div class="field is-grouped">
       <div class="field has-addons">
         <div class="control">
-          <button class="button" id="imageHandling_blank">Blank screen</button>
+          <div class="button is-static">Text Color:</div>
         </div>
         <div class="control">
-          <button class="button" id="imageHandling_screenshot">Request Screenshot</button>
+          <input type="color" id="textColor" value="#FFFFFF" />
         </div>
       </div>
-
-      <label class="label">Connection settings</label>
-      <div class="field has-addons">  
-        <div class="control">
-          <div class="button is-static">
-            OpenLP server ip and port:
-          </div>
-        </div>
-        <div class="control is-right">
-          <input class="input" type="text" id="serverIP" placeholder="localhost" style="text-align:right;"/>
-        </div>
-        <div class="control">
-          <button class="button is-static is-disabled" disabled>
-            :
-          </button>
-        </div>
-        <div class="control">
-          <input class="input" type="text" id="serverHttpPort" placeholder="336" />
-        </div>
-      </div>
-      <div class="field has-addons is-hidden">  
-        <div class="control">
-          <div class="button is-static">
-            Websocket port:
-          </div>
-        </div>
-        <div class="control">
-          <input class="input" type="text" id="serverWebSocketPort" placeholder="4317" />
-        </div>
-      </div>
-
-      <label class="label">Error handling</label>
       <div class="field has-addons">
         <div class="control">
-          <div class="button is-static">
-            Blank screen after connection lost:
-          </div>
+          <div class="button is-static">Background Color:</div>
         </div>
         <div class="control">
-          <input class="input" type="number" id="blankOnConnectionLost" placeholder="0" />
-        </div>
-        <div class="control">
-          <div class="button is-static">
-            seconds
-          </div>
+          <input type="color" id="backgroundColor" value="#000000" />
         </div>
       </div>
+    </div>
 
-      <div class="field">
-        <div class="control">
-          <label class="checkbox">
-            <input type="checkbox" id="showConnectionLostMessages" />
-            Show notification when connection is lost
-          </label>
+    <label class="label">Fade time</label>
+    <div class="field has-addons">
+      <div class="control">
+        <input class="input" type="number" id="fadeTime" placeholder="0.2" />
+      </div>
+      <div class="control">
+        <div class="button is-static">seconds</div>
+      </div>
+    </div>
+
+    <label class="label"
+      >Image handling
+      <button
+        class="tag is-rounded is-small has-text-weight-bold is-link is-hoverable js-modal-trigger"
+        data-target="modal-imageHandling"
+      >
+        ?
+      </button></label
+    >
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <button class="button is-fullwidth" id="imageHandling_blank">
+          Blank screen
+        </button>
+      </div>
+      <div class="control is-expanded">
+        <button class="button is-fullwidth" id="imageHandling_screenshot">
+          Request Screenshot
+        </button>
+      </div>
+    </div>
+
+    <label class="label">Connection settings</label>
+    <div class="field has-addons">
+      <div class="control">
+        <div class="button is-static">OpenLP server ip and port:</div>
+      </div>
+      <div class="control is-right">
+        <input
+          class="input"
+          type="text"
+          id="serverIP"
+          placeholder="localhost"
+          style="text-align: right"
+        />
+      </div>
+      <div class="control">
+        <button class="button is-static is-disabled" disabled>:</button>
+      </div>
+      <div class="control">
+        <input
+          class="input"
+          type="text"
+          id="serverHttpPort"
+          placeholder="336"
+        />
+      </div>
+    </div>
+    <div class="field has-addons is-hidden">
+      <div class="control">
+        <div class="button is-static">Websocket port:</div>
+      </div>
+      <div class="control">
+        <input
+          class="input"
+          type="text"
+          id="serverWebSocketPort"
+          placeholder="4317"
+        />
+      </div>
+    </div>
+
+    <label class="label">Error handling</label>
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <div class="button is-fullwidth is-static">
+          Blank screen after connection lost:
         </div>
       </div>
-
-      <div class="field">
-        <div class="control">
-          <label class="checkbox">
-            <input type="checkbox" id="showSuccessfulConnectionMessages" />
-            Show notification when connection is restored
-          </label>
-        </div>
+      <div class="control is-expanded">
+        <input
+          class="input is-fullwidth"
+          type="number"
+          id="blankOnConnectionLost"
+          placeholder="0"
+        />
       </div>
-
-      <div class="field">
-        <label class="label">Factory defaults</label>
-        <div class="control">
-          <button class="button is-danger is-dark is-small js-modal-trigger" data-target="modal-factoryDefaults" id="factoryDefaults">
-            Reset all settings to factory defaults
-          </button>
-        </div>
+      <div class="control is-expanded">
+        <div class="button is-fullwidth is-static">seconds</div>
       </div>
+    </div>
 
-      <div class="notification mt-5">
-        <h6 class="title is-6 has-text-centered mb-3">Display Keyboard Shortcuts</h6>
-        <div class="tags is-centered">
-          <span class="tag">
-            <span class="kbd">Esc</span>&nbsp;to quit
-          </span>
-          <span class="tag">
-            <span class="kbd">S</span>&nbsp;or&nbsp;<span class="kbd">P</span>&nbsp;to settings
-          </span>
-          <span class="tag">
-            <span class="kbd">F11</span>&nbsp;for fullscreen
-          </span>
-        </div>
+    <div class="field">
+      <div class="control">
+        <label class="checkbox">
+          <input type="checkbox" id="showConnectionLostMessages" />
+          Show notification when connection is lost
+        </label>
       </div>
+    </div>
 
-      <div class="modal" id="modal-factoryDefaults">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Factory defaults</p>
-            <button class="delete" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-          <p>Are you sure you want to reset all settings to factory defaults?</p>
+    <div class="field">
+      <div class="control">
+        <label class="checkbox">
+          <input type="checkbox" id="showSuccessfulConnectionMessages" />
+          Show notification when connection is restored
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Factory defaults</label>
+      <div class="control">
+        <button
+          class="button is-danger is-dark is-small js-modal-trigger"
+          data-target="modal-factoryDefaults"
+          id="factoryDefaults"
+        >
+          Reset all settings to factory defaults
+        </button>
+      </div>
+    </div>
+
+    <div class="notification mt-5">
+      <h6 class="title is-6 has-text-centered mb-3">
+        Display Keyboard Shortcuts
+      </h6>
+      <div class="tags is-centered">
+        <span class="tag"> <span class="kbd">Esc</span>&nbsp;to quit </span>
+        <span class="tag">
+          <span class="kbd">S</span>&nbsp;or&nbsp;<span class="kbd">P</span
+          >&nbsp;to settings
+        </span>
+        <span class="tag">
+          <span class="kbd">F11</span>&nbsp;for fullscreen
+        </span>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-factoryDefaults">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Factory defaults</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>
+            Are you sure you want to reset all settings to factory defaults?
+          </p>
           <p>This action <strong>cannot be undone.</strong></p>
-          </section>
-          <footer class="modal-card-foot">
-            <div class="buttons">
-              <button class="button is-danger is-dark" id="factoryReset" >Factory defaults</button>
-              <button class="button">Cancel</button>
-            </div>
-          </footer>
-        </div>
-      </div>
-
-      <div class="modal" id="modal-imageHandling">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Handling images</p>
-            <button class="delete" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <div class="content">
-              <h5 class="title is-5">Understanding Image Handling</h5>
-              <p>OpenLP Display Client uses the web-based remote plugin as its data source. However, there are some limitations:</p>
-              <p>The remote plugin does not provide direct access to raw image data on slides. The only available solution is requesting a screenshot of the slide display from OpenLP.</p>
-
-              <h6 class="title is-6 mt-5">Current Limitations</h6>
-              <ul>
-                <li>OpenLP must actively display the slide, requiring either:
-                  <ul>
-                    <li>Two monitors, or</li>
-                    <li>Virtual Display Driver (<a href="https://vdd.mikethetech.com/" target="_blank">vdd.mikethetech.com</a>)</li>
-                  </ul>
-                </li>
-                <li>Screenshots maintain screen dimensions, potentially including black bars</li>
-              </ul>
-
-              <h6 class="title is-6">Setting Up Virtual Display Driver</h6>
-              <ol>
-                <li>Download the latest Virtual Display Driver from <a class="is-primary" href="https://github.com/VirtualDisplay/Virtual-Display-Driver/releases/latest" target="_blank">GitHub</a><br>
-                    Look for: <code class="has-text-white">Virtual.Display.Driver-v[...]-setup-x64.exe</code>
-                </li>
-                <li>During installation, select 'Complete installation with all components'</li>
-                <li>After installation launch the Companion App</li>
-                <li>Control the virtual display via the tray icon:
-                  <ul>
-                    <li>Right-click to Enable/Disable Driver</li>
-                    <li>Optional: Enable 'Start on Startup' to always have Companion available</li>
-                  </ul>
-                </li>
-              </ol>
-
-              <h6 class="title is-6 mt-5">Configuring Custom Resolution</h6>
-              <p>Match the Virtual Display resolution to your OpenLP Display Client for optimal image fitting:</p>
-              <ol>
-                <li>Navigate to <code class="has-text-white">C:\VirtualDisplayDriver</code></li>
-                <li>Open <code class="has-text-white">vdd_settings.xml</code> in a text editor</li>
-                <li>Add or modify resolution settings</li>
-                <li>Save the file</li>
-                <li>Click 'Reload Settings' in the VDD tray icon menu</li>
-              </ol>
-            </div>
-          </section>
-          <footer class="modal-card-foot">
-            <div class="buttons">
-              <button class="button is-primary" id="imageHandling_close">Got it</button>
-            </div>
-          </footer>
-        </div>
-      </div>
-
-      <nav class="navbar is-fixed-bottom has-shadow is-black">
-          <div class="navbar-item">
-            <div class="buttons">
-              <button class="button is-primary" id="startDisplay">Start Display</button>
-              <button class="button is-danger" id="exit">Exit</button>
-            </div>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-danger is-dark" id="factoryReset">
+              Factory defaults
+            </button>
+            <button class="button">Cancel</button>
           </div>
-      </nav>
-</body>
+        </footer>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-imageHandling">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Handling images</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="content">
+            <h5 class="title is-5">Understanding Image Handling</h5>
+            <p>
+              OpenLP Display Client uses the web-based remote plugin as its data
+              source. However, there are some limitations:
+            </p>
+            <p>
+              The remote plugin does not provide direct access to raw image data
+              on slides. The only available solution is requesting a screenshot
+              of the slide display from OpenLP.
+            </p>
+
+            <h6 class="title is-6 mt-5">Current Limitations</h6>
+            <ul>
+              <li>
+                OpenLP must actively display the slide, requiring either:
+                <ul>
+                  <li>Two monitors, or</li>
+                  <li>
+                    Virtual Display Driver (<a
+                      href="https://vdd.mikethetech.com/"
+                      target="_blank"
+                      >vdd.mikethetech.com</a
+                    >)
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Screenshots maintain screen dimensions, potentially including
+                black bars
+              </li>
+            </ul>
+
+            <h6 class="title is-6">Setting Up Virtual Display Driver</h6>
+            <ol>
+              <li>
+                Download the latest Virtual Display Driver from
+                <a
+                  class="is-primary"
+                  href="https://github.com/VirtualDisplay/Virtual-Display-Driver/releases/latest"
+                  target="_blank"
+                  >GitHub</a
+                ><br />
+                Look for:
+                <code class="has-text-white"
+                  >Virtual.Display.Driver-v[...]-setup-x64.exe</code
+                >
+              </li>
+              <li>
+                During installation, select 'Complete installation with all
+                components'
+              </li>
+              <li>After installation launch the Companion App</li>
+              <li>
+                Control the virtual display via the tray icon:
+                <ul>
+                  <li>Right-click to Enable/Disable Driver</li>
+                  <li>
+                    Optional: Enable 'Start on Startup' to always have Companion
+                    available
+                  </li>
+                </ul>
+              </li>
+            </ol>
+
+            <h6 class="title is-6 mt-5">Configuring Custom Resolution</h6>
+            <p>
+              Match the Virtual Display resolution to your OpenLP Display Client
+              for optimal image fitting:
+            </p>
+            <ol>
+              <li>
+                Navigate to
+                <code class="has-text-white">C:\VirtualDisplayDriver</code>
+              </li>
+              <li>
+                Open <code class="has-text-white">vdd_settings.xml</code> in a
+                text editor
+              </li>
+              <li>Add or modify resolution settings</li>
+              <li>Save the file</li>
+              <li>Click 'Reload Settings' in the VDD tray icon menu</li>
+            </ol>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-primary" id="imageHandling_close">
+              Got it
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <nav class="navbar is-fixed-bottom has-shadow is-black">
+      <div class="navbar-item">
+        <div class="buttons">
+          <button class="button is-primary" id="startDisplay">
+            Start Display
+          </button>
+          <button class="button is-danger" id="exit">Exit</button>
+        </div>
+      </div>
+    </nav>
+  </body>
 </html>
