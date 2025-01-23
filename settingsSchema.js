@@ -57,7 +57,7 @@ const settingsSchema = {
     },
     dynamicFontScalingMax: {
       type: 'number',
-      default: 24,
+      default: 500,
       description: 'Maximum font size when dynamic scaling is enabled',
     },
     backgroundColor: {
@@ -74,6 +74,12 @@ const settingsSchema = {
       type: 'number',
       default: 0.2,
       description: 'Duration of fade transitions in seconds',
+    },
+    imageHandling: {
+      type: 'string',
+      default: 'Blank',
+      enum: ['Blank', 'Screenshot'],
+      description: 'Action to take when an image is displayed',
     },
     serverIP: {
       type: 'string',

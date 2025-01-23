@@ -56,6 +56,21 @@ function setupButtonGroupHandlers() {
       });
     }
   });
+
+  // Image handling buttons
+  const imageHandlingButtons = ['imageHandling_blank', 'imageHandling_screenshot'];
+  imageHandlingButtons.forEach(id => {
+    const button = document.getElementById(id);
+    if (button) {
+      button.addEventListener('click', () => {
+        setActiveButton(id, imageHandlingButtons);
+        // Convert id to proper case (e.g., 'windowType_normal' -> 'Normal')
+        const type = id.replace('imageHandling_', '');
+        window.electron.store.set('imageHandling', type.charAt(0).toUpperCase() + type.slice(1));
+      });
+    }
+  });
+
 }
 
 // Setup handler for display screen selector
@@ -256,6 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setActiveButton(
       `windowType_${windowType}`,
       ['windowType_normal', 'windowType_borderless', 'windowType_fullscreen']
+    );
+
+    // Load image handling setting
+    const imageHandling = getSetting('imageHandling').toLowerCase();
+    setActiveButton(
+      `imageHandling_${imageHandling}`,
+      ['imageHandling_blank', 'imageHandling_screenshot']
     );
 
     // Load numeric inputs

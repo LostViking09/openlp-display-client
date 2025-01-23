@@ -1,4 +1,4 @@
-/* global viewportSize, textFit */
+/* global textFit */
 
 const serverIP = window.electron.store.get('serverIP');
 const serverWebSocketPort = window.electron.store.get('serverWebSocketPort');
@@ -6,6 +6,7 @@ const serverHttpPort = window.electron.store.get('serverHttpPort');
 const blankOnConnectionLost = window.electron.store.get('blankOnConnectionLost');
 const showConnectionLostMessages = window.electron.store.get('showConnectionLostMessages');
 const showSuccessfulConnectionMessages = window.electron.store.get('showSuccessfulConnectionMessages');
+const imageHandling = window.electron.store.get('imageHandling');
 let hasShownConnectionLostMessage = false;
 let initialConnection = true;
 const http_api_url = "/api/v2/controller/live-item";
@@ -155,15 +156,24 @@ async function wsConnect() {
     }
 }
 
-async function fetchSlideText() {
-    currentSlide =  useSecondSlideDiv ? slideText1 : slideText0;
-    lastSlide    = !useSecondSlideDiv ? slideText1 : slideText0;
-    slideText0.style.width = viewportSize.getWidth() -50 + 'px';
+async function fetchScreenshot() {
+    try {
+        const response = await fetch('http://' + serverIP + ':' + serverHttpPort + '/api/v2/core/live-image');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.binary_image;
+    } catch (error) {
+        console.log('Error fetching screenshot:', error);
+        return null;
+    }
+}
 
+async function fetchSlideText() {
+    currentSlide = useSecondSlideDiv ? slideText1 : slideText0;
+    lastSlide = !useSecondSlideDiv ? slideText1 : slideText0;
     let wasHttpConnected = httpConnected;
-    slideText0.style.height = viewportSize.getHeight() -50 + 'px';
-    slideText1.style.width = viewportSize.getWidth() -50 + 'px';
-    slideText1.style.height = viewportSize.getHeight() -50 + 'px';
     
     try {
         const response = await fetch('http://' + serverIP + ':' + serverHttpPort + http_api_url);
@@ -177,20 +187,58 @@ async function fetchSlideText() {
         if (!wasHttpConnected && wsConnected) {
             clearConnectionLostTimer();
         }
+
+        // Handle image slides
+        if (data.name === 'images') {
+            if (imageHandling === 'Blank') {
+                // Blank the screen for images
+                if (!screenBlanked) {
+                    screenBlanked = true;
+                    updateOpacity();
+                }
+                return;
+            } else if (imageHandling === 'Screenshot') {
+                // Request and display the screenshot
+                const imageData = await fetchScreenshot();
+                if (imageData) {
+                    const slideHTML = `<div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                        <img src="${imageData}" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>`;
+                    currentSlide.classList.add('image-mode');
+                    if (currentSlideHTML !== slideHTML) {
+                        currentSlide.innerHTML = slideHTML;
+                        currentSlideHTML = slideHTML;
+                        screenBlanked = false;
+                        updateOpacity();
+                        useSecondSlideDiv = !useSecondSlideDiv;
+                    }
+                }
+                return;
+            }
+        }
         
-        // Check if we have slides and the first slide has text
+        // Not an image slide, handle as normal text slide
         if (data.slides && data.slides.length > 0 && data.slides[0].text) {
             let slideHTML = data.slides[0].html;
             slideHTML = '<p>' + slideHTML.replaceAll('<br>','<p>');
-            if (currentSlideHTML != slideHTML){
+            if (currentSlideHTML != slideHTML) {
                 console.log('difff');
                 currentSlide.innerHTML = slideHTML;
                 currentSlideHTML = slideHTML;
+                screenBlanked = false;
                 updateOpacity();
                 useSecondSlideDiv = !useSecondSlideDiv; // switch which DIV is in use
             }
         } else {
             throw new Error('No slide text data');
+        }
+        
+        // Only apply textFit for non-image slides
+        if (data.name !== 'images') {
+            currentSlide.classList.remove('image-mode');
+            lastSlide.classList.remove('image-mode');
+            textFit(slideText0, {minFontSize: dynamicFontScalingMin, maxFontSize: dynamicFontScalingMax, multiLine: true});
+            textFit(slideText1, {minFontSize: dynamicFontScalingMin, maxFontSize: dynamicFontScalingMax, multiLine: true});
         }
     } catch (error) {
         console.log(error);
@@ -199,9 +247,6 @@ async function fetchSlideText() {
             startConnectionLostTimer();
         }
     }
-
-    textFit(slideText0, {minFontSize: dynamicFontScalingMin, maxFontSize: dynamicFontScalingMax, multiLine: true});
-    textFit(slideText1, {minFontSize: dynamicFontScalingMin, maxFontSize: dynamicFontScalingMax, multiLine: true});
 }
 
 function updateOpacity() {

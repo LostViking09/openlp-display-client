@@ -33,6 +33,10 @@
     * Text color
 * ### Fade time
 
+## Image settings
+* ### Image Handling
+    Blank screen when current slide is image, or display a screenshot.
+
 
 ## Connection settings
 * Server IP
