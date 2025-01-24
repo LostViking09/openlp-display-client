@@ -269,6 +269,12 @@ async function fetchSlideText() {
     if (data.slides && data.slides.length > 0 && data.slides[0].text) {
       let slideHTML = data.slides[0].html;
       slideHTML = "<p>" + slideHTML.replaceAll("<br>", "<p>");
+
+      // Add footer for bible slides
+      if (data.name === "bibles" && data.footer) {
+        slideHTML += `<p class="tag">${data.footer.join(" ")}</p>`;
+      }
+
       if (currentSlideHTML !== slideHTML) {
         currentSlide.innerHTML = slideHTML;
         currentSlideHTML = slideHTML;

@@ -1,109 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OpenLP Live Item Display</title>
-    <link rel="stylesheet" href="bulma.min.css">
+    <link rel="stylesheet" href="bulma.min.css" />
     <script id="textFitLib" src="textFit.js"></script>
     <script id="viewportSizeLib" src="viewportSize.js"></script>
     <style>
-        
+      /* Base layout */
+      html,
+      body {
+        /* stylelint-disable-next-line property-no-unknown */
+        app-region: drag;
+        user-select: none;
 
-        /* Base layout */
-        html, body {
-            /* stylelint-disable-next-line property-no-unknown */
-            app-region: drag;
-            user-select: none;
-            
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: fixed;
-        }
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: fixed;
+      }
 
-        .navbar-brand {
-            min-height: unset !important;
-        }
+      .navbar-brand {
+        min-height: unset !important;
+      }
 
+      /* Status bar styling and animations */
+      #statusBar {
+        position: fixed;
+        bottom: calc(
+          calc(
+              var(--bulma-navbar-height) + var(--bulma-navbar-padding-vertical)
+            ) *
+            -1
+        ); /* Start off screen */
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        transition: bottom 0.3s ease-in-out;
+        /* padding: 0.5rem; */
+        font-size: 0.9rem;
+        min-height: unset;
+        font-family: Arial, Helvetica, sans-serif;
+      }
 
-        /* Status bar styling and animations */
-        #statusBar {
-            position: fixed;
-            bottom: calc(calc(var(--bulma-navbar-height) + var(--bulma-navbar-padding-vertical)) * -1); /* Start off screen */
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            transition: bottom 0.3s ease-in-out;
-            /* padding: 0.5rem; */
-            font-size: 0.9rem;
-            min-height: unset;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+      #statusBar.visible {
+        bottom: 0;
+      }
 
-        #statusBar.visible {
-            bottom: 0;
-        }
+      #statusBar.is-success {
+        background-color: #48c774;
+        color: #fff;
+      }
 
-        #statusBar.is-success {
-            background-color: #48c774;
-            color: #fff;
-        }
+      #statusBar.is-danger {
+        background-color: #f14668;
+        color: #fff;
+      }
 
-        #statusBar.is-danger {
-            background-color: #f14668;
-            color: #fff;
-        }
+      /* Line height styling */
+      p {
+        margin: 0.3em 0em 0em 0em;
+      }
+      p:nth-of-type(1) {
+        margin: 0em 0em 0em 0em;
+      }
 
-        /* Line height styling */
-        p {
-            margin: 0.3em 0em 0em 0em;
-        }
-        p:nth-of-type(1) {
-            margin: 0em 0em 0em 0em;
-        }
+      body {
+        /* font-family: Arial, sans-serif; */
+        /* font-weight: bold; */
+        background-color: black;
+        color: white;
+        /* text-indent: 3em hanging; */
+      }
+      .slideText {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 1em;
+        opacity: 1;
+        width: 100%;
+        height: 100%;
+      }
 
-        body {
-            /* font-family: Arial, sans-serif; */
-            /* font-weight: bold; */
-            background-color: black;
-            color: white;
-            /* text-indent: 3em hanging; */
-        }
-        .slideText {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 1em;
-            opacity: 1;
-            width: 100%;
-            height: 100%;
-        }
+      .slideText.image-mode {
+        padding: 0;
+        transition: padding 0.5s;
+      }
 
-        .slideText.image-mode {
-            padding: 0;
-            transition: padding 0.5s;
-        }
-
-        body.cursor-hidden {
-            cursor: none;
-        }
+      body.cursor-hidden {
+        cursor: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="slideText0" class="slideText"></div>
     <div id="slideText1" class="slideText"></div>
     <nav id="statusBar" class="navbar">
-        <div class="navbar-brand">
-            <div class="navbar-item">
-                <span id="statusText"></span>
-            </div>
+      <div class="navbar-brand">
+        <div class="navbar-item">
+          <span id="statusText"></span>
         </div>
+      </div>
     </nav>
 
     <script src="display.js"></script>
-</body>
+  </body>
 </html>
