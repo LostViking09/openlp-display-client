@@ -1,286 +1,317 @@
 /* global textFit */
 
-const serverIP = window.electron.store.get('serverIP');
-const serverHttpPort = window.electron.store.get('serverHttpPort');
-const blankOnConnectionLost = window.electron.store.get('blankOnConnectionLost');
+const serverIP = window.electron.store.get("serverIP");
+const serverHttpPort = window.electron.store.get("serverHttpPort");
+const blankOnConnectionLost = window.electron.store.get(
+  "blankOnConnectionLost",
+);
 let serverWebSocketPort = null;
-const showConnectionLostMessages = window.electron.store.get('showConnectionLostMessages');
-const showSuccessfulConnectionMessages = window.electron.store.get('showSuccessfulConnectionMessages');
-const imageHandling = window.electron.store.get('imageHandling');
+const showConnectionLostMessages = window.electron.store.get(
+  "showConnectionLostMessages",
+);
+const showSuccessfulConnectionMessages = window.electron.store.get(
+  "showSuccessfulConnectionMessages",
+);
+const imageHandling = window.electron.store.get("imageHandling");
 let hasShownConnectionLostMessage = false;
 let initialConnection = true;
-const http_api_url = '/api/v2/controller/live-item';
+const http_api_url = "/api/v2/controller/live-item";
 let ws; // WebSocket instance
 let connectionLostTimer = null; // Timer for connection lost blanking
 let notificationTimer = null; // Timer for connection lost notification
 let wsConnected = false; // Track WebSocket connection status
 let httpConnected = false; // Track HTTP connection status
-const slideText0 = document.getElementById('slideText0');
-const slideText1 = document.getElementById('slideText1');
-const statusBar = document.getElementById('statusBar');
-const statusText = document.getElementById('statusText');
+const slideText0 = document.getElementById("slideText0");
+const slideText1 = document.getElementById("slideText1");
+const statusBar = document.getElementById("statusBar");
+const statusText = document.getElementById("statusText");
 
-const dynamicFontScalingMin = window.electron.store.get('dynamicFontScalingMin');
-const dynamicFontScalingMax = window.electron.store.get('dynamicFontScalingMax');
+const dynamicFontScalingMin = window.electron.store.get(
+  "dynamicFontScalingMin",
+);
+const dynamicFontScalingMax = window.electron.store.get(
+  "dynamicFontScalingMax",
+);
 
 let currentSlide = slideText0;
 let lastSlide = slideText1;
 let useSecondSlideDiv = false; // selects which div is shown (for transitions)
-let currentSlideHTML = ''; // stores the current html to check for changes
+let currentSlideHTML = ""; // stores the current html to check for changes
 let screenBlanked = false; // true if display is blanked
 
 // Init functions
 function setStyling() {
-    document.body.style.fontFamily = window.electron.store.get('fontFace');
-    document.body.style.fontWeight = window.electron.store.get('alwaysBold') ? 'bold' : 'normal';
-    if (!window.electron.store.get('dynamicFontScalingEnabled')) {
-        document.body.style.fontSize = window.electron.store.get('staticFontSize') + 'px';
-    }
-    document.body.style.backgroundColor = window.electron.store.get('backgroundColor');
-    document.body.style.color = window.electron.store.get('textColor');
-    const fadeTime = window.electron.store.get('fadeTime') + 's';
-    slideText0.style.transition = `opacity ${fadeTime}`;
-    slideText1.style.transition = `opacity ${fadeTime}`;
+  document.body.style.fontFamily = window.electron.store.get("fontFace");
+  document.body.style.fontWeight = window.electron.store.get("alwaysBold")
+    ? "bold"
+    : "normal";
+  if (!window.electron.store.get("dynamicFontScalingEnabled")) {
+    document.body.style.fontSize =
+      window.electron.store.get("staticFontSize") + "px";
+  }
+  document.body.style.backgroundColor =
+    window.electron.store.get("backgroundColor");
+  document.body.style.color = window.electron.store.get("textColor");
+  const fadeTime = window.electron.store.get("fadeTime") + "s";
+  slideText0.style.transition = `opacity ${fadeTime}`;
+  slideText1.style.transition = `opacity ${fadeTime}`;
 }
 
 function showStatus(message, isError = true) {
-    // Check appropriate setting before showing status
-    if ((isError && !showConnectionLostMessages) || 
-        (!isError && !showSuccessfulConnectionMessages)) {
-        return;
-    }
+  // Check appropriate setting before showing status
+  if (
+    (isError && !showConnectionLostMessages) ||
+    (!isError && !showSuccessfulConnectionMessages)
+  ) {
+    return;
+  }
 
-    statusBar.classList.toggle('is-danger', isError);
-    statusBar.classList.toggle('is-success', !isError);
-    statusText.innerHTML = message;
-    statusBar.classList.add('visible');
-    
-    // Auto-hide success messages after 3 seconds
-    if (!isError) {
-        setTimeout(() => {
-            statusBar.classList.remove('visible');
-        }, 3000);
-    }
+  statusBar.classList.toggle("is-danger", isError);
+  statusBar.classList.toggle("is-success", !isError);
+  statusText.innerHTML = message;
+  statusBar.classList.add("visible");
+
+  // Auto-hide success messages after 3 seconds
+  if (!isError) {
+    setTimeout(() => {
+      statusBar.classList.remove("visible");
+    }, 3000);
+  }
 }
 
 function startConnectionLostTimer() {
-    // Handle screen blanking timer
-    if (blankOnConnectionLost > 0 && !connectionLostTimer) {
-        connectionLostTimer = setTimeout(() => {
-            screenBlanked = true;
-            updateOpacity();
-            // Show status immediately with screen blanking
-            if (!wsConnected || !httpConnected) {
-                showStatus(`Connection lost to OpenLP server at <code>${serverIP}</code>`, true);
-                hasShownConnectionLostMessage = true;
-            }
-        }, blankOnConnectionLost * 1000);
-    }
-    
-    // Handle status timer when screen blanking is disabled
-    if (blankOnConnectionLost === 0 && !notificationTimer) {
-        notificationTimer = setTimeout(() => {
-            if (!wsConnected || !httpConnected) {
-                showStatus(`Connection lost to OpenLP server at <code>${serverIP}</code>`, true);
-                hasShownConnectionLostMessage = true;
-            }
-        }, 10000); // 10 seconds
-    }
+  // Handle screen blanking timer
+  if (blankOnConnectionLost > 0 && !connectionLostTimer) {
+    connectionLostTimer = setTimeout(() => {
+      screenBlanked = true;
+      updateOpacity();
+      // Show status immediately with screen blanking
+      if (!wsConnected || !httpConnected) {
+        showStatus(
+          `Connection lost to OpenLP server at <code>${serverIP}</code>`,
+          true,
+        );
+        hasShownConnectionLostMessage = true;
+      }
+    }, blankOnConnectionLost * 1000);
+  }
+
+  // Handle status timer when screen blanking is disabled
+  if (blankOnConnectionLost === 0 && !notificationTimer) {
+    notificationTimer = setTimeout(() => {
+      if (!wsConnected || !httpConnected) {
+        showStatus(
+          `Connection lost to OpenLP server at <code>${serverIP}</code>`,
+          true,
+        );
+        hasShownConnectionLostMessage = true;
+      }
+    }, 10000); // 10 seconds
+  }
 }
 
 function clearConnectionLostTimer() {
-    // Clear screen blanking timer
-    if (connectionLostTimer) {
-        clearTimeout(connectionLostTimer);
-        connectionLostTimer = null;
+  // Clear screen blanking timer
+  if (connectionLostTimer) {
+    clearTimeout(connectionLostTimer);
+    connectionLostTimer = null;
+  }
+  // Clear status timer
+  if (notificationTimer) {
+    clearTimeout(notificationTimer);
+    notificationTimer = null;
+  }
+  // If both connections are working and screen was blanked, unblank it
+  if (wsConnected && httpConnected) {
+    if (screenBlanked && !connectionLostTimer) {
+      screenBlanked = false;
+      updateOpacity();
+      fetchSlideText();
     }
-    // Clear status timer
-    if (notificationTimer) {
-        clearTimeout(notificationTimer);
-        notificationTimer = null;
+
+    // Show success message on initial connection or after connection loss
+    if (initialConnection || hasShownConnectionLostMessage) {
+      showStatus(
+        `Successfully connected to OpenLP server at <code class="has-text-success">${serverIP}</code>`,
+        false,
+      );
+      initialConnection = false;
+      hasShownConnectionLostMessage = false;
     }
-    // If both connections are working and screen was blanked, unblank it
-    if (wsConnected && httpConnected) {
-        if (screenBlanked && !connectionLostTimer) {
-            screenBlanked = false;
-            updateOpacity();
-            fetchSlideText();
-        }
-        
-        // Show success message on initial connection or after connection loss
-        if (initialConnection || hasShownConnectionLostMessage) {
-            showStatus(`Successfully connected to OpenLP server at <code class="has-text-success">${serverIP}</code>`, false);
-            initialConnection = false;
-            hasShownConnectionLostMessage = false;
-        }
-    }
+  }
 }
 
 async function getWebSocketPort() {
-    try {
-        const response = await fetch(`http://${serverIP}:${serverHttpPort}/api/v2/core/system`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data.websocket_port;
-    } catch (error) {
-        console.log('Error fetching websocket port:', error);
-        // Fallback to stored value if API call fails
-        return window.electron.store.get('serverWebSocketPort');
+  try {
+    const response = await fetch(
+      `http://${serverIP}:${serverHttpPort}/api/v2/core/system`,
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
+    return data.websocket_port;
+  } catch (error) {
+    console.log("Error fetching websocket port:", error);
+    // Fallback to stored value if API call fails
+    return window.electron.store.get("serverWebSocketPort");
+  }
 }
 
 async function wsConnect() {
-    if (!serverWebSocketPort) {
-        serverWebSocketPort = await getWebSocketPort();
+  if (!serverWebSocketPort) {
+    serverWebSocketPort = await getWebSocketPort();
+  }
+  ws = new WebSocket(`ws://${serverIP}:${serverWebSocketPort}`);
+
+  ws.onopen = () => {
+    wsConnected = true;
+    if (httpConnected) {
+      clearConnectionLostTimer();
     }
-    ws = new WebSocket(`ws://${serverIP}:${serverWebSocketPort}`);
-    
-    ws.onopen = () => {
-        wsConnected = true;
-        if (httpConnected) {
-            clearConnectionLostTimer();
+  };
+
+  ws.onclose = () => {
+    wsConnected = false;
+    initialConnection = false; // No longer initial connection after a disconnect
+    startConnectionLostTimer();
+    // Try to reconnect
+    setTimeout(wsConnect, 1000);
+  };
+
+  ws.onmessage = (event) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const state = JSON.parse(reader.result.toString()).results;
+      if (screenBlanked !== state.blank) {
+        if (!state.blank) {
+          slideText0.innerHTML = "";
+          slideText1.innerHTML = "";
+          currentSlideHTML = "";
+          screenBlanked = state.blank;
+          fetchSlideText();
+        } else {
+          screenBlanked = state.blank;
+          updateOpacity();
         }
+      }
     };
-
-    ws.onclose = () => {
-        wsConnected = false;
-        initialConnection = false; // No longer initial connection after a disconnect
-        startConnectionLostTimer();
-        // Try to reconnect
-        setTimeout(wsConnect, 1000);
-    };
-
-    ws.onmessage = (event) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const state = JSON.parse(reader.result.toString()).results;
-            if (screenBlanked !== state.blank) {
-                if (!state.blank) {
-                    slideText0.innerHTML = '';
-                    slideText1.innerHTML = '';
-                    currentSlideHTML = '';
-                    screenBlanked = state.blank;
-                    fetchSlideText();
-                } else { 
-                    screenBlanked = state.blank;
-                    updateOpacity(); 
-                }
-            }
-        };
-        reader.readAsText(event.data);
-    };
+    reader.readAsText(event.data);
+  };
 }
 
 async function fetchScreenshot() {
-    try {
-        const response = await fetch(`http://${serverIP}:${serverHttpPort}/api/v2/core/live-image`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data.binary_image;
-    } catch (error) {
-        console.log('Error fetching screenshot:', error);
-        return null;
+  try {
+    const response = await fetch(
+      `http://${serverIP}:${serverHttpPort}/api/v2/core/live-image`,
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
+    return data.binary_image;
+  } catch (error) {
+    console.log("Error fetching screenshot:", error);
+    return null;
+  }
 }
 
 async function fetchSlideText() {
-    currentSlide = useSecondSlideDiv ? slideText1 : slideText0;
-    lastSlide = !useSecondSlideDiv ? slideText1 : slideText0;
-    let wasHttpConnected = httpConnected;
-    
-    try {
-        const response = await fetch(`http://${serverIP}:${serverHttpPort}${http_api_url}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        // HTTP connection successful
-        httpConnected = true;
-        if (!wasHttpConnected && wsConnected) {
-            clearConnectionLostTimer();
-        }
+  currentSlide = useSecondSlideDiv ? slideText1 : slideText0;
+  lastSlide = !useSecondSlideDiv ? slideText1 : slideText0;
+  let wasHttpConnected = httpConnected;
 
-        // Handle image slides
-        if (data.name === 'images') {
-            if (imageHandling === 'Blank') {
-                // Blank the screen for images
-                if (!screenBlanked) {
-                    screenBlanked = true;
-                    updateOpacity();
-                }
-                return;
-            } else if (imageHandling === 'Screenshot') {
-                // Request and display the screenshot
-                const imageData = await fetchScreenshot();
-                if (imageData) {
-                    const slideHTML = `<div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+  try {
+    const response = await fetch(
+      `http://${serverIP}:${serverHttpPort}${http_api_url}`,
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    // HTTP connection successful
+    httpConnected = true;
+    if (!wasHttpConnected && wsConnected) {
+      clearConnectionLostTimer();
+    }
+
+    // Handle image slides
+    if (data.name === "images") {
+      if (imageHandling === "Blank") {
+        // Blank the screen for images
+        if (!screenBlanked) {
+          screenBlanked = true;
+          updateOpacity();
+        }
+        return;
+      } else if (imageHandling === "Screenshot") {
+        // Request and display the screenshot
+        const imageData = await fetchScreenshot();
+        if (imageData) {
+          const slideHTML = `<div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
                         <img src="${imageData}" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>`;
-                    currentSlide.classList.add('image-mode');
-                    if (currentSlideHTML !== slideHTML) {
-                        currentSlide.innerHTML = slideHTML;
-                        currentSlideHTML = slideHTML;
-                        screenBlanked = false;
-                        updateOpacity();
-                        useSecondSlideDiv = !useSecondSlideDiv;
-                    }
-                }
-                return;
-            }
+          currentSlide.classList.add("image-mode");
+          if (currentSlideHTML !== slideHTML) {
+            currentSlide.innerHTML = slideHTML;
+            currentSlideHTML = slideHTML;
+            screenBlanked = false;
+            updateOpacity();
+            useSecondSlideDiv = !useSecondSlideDiv;
+          }
         }
-        
-        // Not an image slide, handle as normal text slide
-        if (data.slides && data.slides.length > 0 && data.slides[0].text) {
-            let slideHTML = data.slides[0].html;
-            slideHTML = '<p>' + slideHTML.replaceAll('<br>', '<p>');
-            if (currentSlideHTML !== slideHTML) {
-                currentSlide.innerHTML = slideHTML;
-                currentSlideHTML = slideHTML;
-                screenBlanked = false;
-                updateOpacity();
-                useSecondSlideDiv = !useSecondSlideDiv; // switch which DIV is in use
-            }
-        } else {
-            throw new Error('No slide text data');
-        }
-        
-        // Only apply textFit for non-image slides
-        if (data.name !== 'images') {
-            currentSlide.classList.remove('image-mode');
-            lastSlide.classList.remove('image-mode');
-            textFit(slideText0, {
-                minFontSize: dynamicFontScalingMin,
-                maxFontSize: dynamicFontScalingMax,
-                multiLine: true
-            });
-            textFit(slideText1, {
-                minFontSize: dynamicFontScalingMin,
-                maxFontSize: dynamicFontScalingMax,
-                multiLine: true
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        httpConnected = false;
-        if (wasHttpConnected) {
-            startConnectionLostTimer();
-        }
+        return;
+      }
     }
+
+    // Not an image slide, handle as normal text slide
+    if (data.slides && data.slides.length > 0 && data.slides[0].text) {
+      let slideHTML = data.slides[0].html;
+      slideHTML = "<p>" + slideHTML.replaceAll("<br>", "<p>");
+      if (currentSlideHTML !== slideHTML) {
+        currentSlide.innerHTML = slideHTML;
+        currentSlideHTML = slideHTML;
+        screenBlanked = false;
+        updateOpacity();
+        useSecondSlideDiv = !useSecondSlideDiv; // switch which DIV is in use
+      }
+    } else {
+      throw new Error("No slide text data");
+    }
+
+    // Only apply textFit for non-image slides
+    if (data.name !== "images") {
+      currentSlide.classList.remove("image-mode");
+      lastSlide.classList.remove("image-mode");
+      textFit(slideText0, {
+        minFontSize: dynamicFontScalingMin,
+        maxFontSize: dynamicFontScalingMax,
+        multiLine: true,
+      });
+      textFit(slideText1, {
+        minFontSize: dynamicFontScalingMin,
+        maxFontSize: dynamicFontScalingMax,
+        multiLine: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    httpConnected = false;
+    if (wasHttpConnected) {
+      startConnectionLostTimer();
+    }
+  }
 }
 
 function updateOpacity() {
-    if (screenBlanked) {
-        currentSlide.style.opacity = 0;
-        lastSlide.style.opacity = 0;
-    } else {
-        currentSlide.style.opacity = 1;
-        lastSlide.style.opacity = 0;
-    }
+  if (screenBlanked) {
+    currentSlide.style.opacity = 0;
+    lastSlide.style.opacity = 0;
+  } else {
+    currentSlide.style.opacity = 1;
+    lastSlide.style.opacity = 0;
+  }
 }
 
 // Cursor hiding functionality
@@ -288,52 +319,57 @@ let cursorTimeout;
 const CURSOR_HIDE_DELAY = 3000; // 3 seconds
 
 function showCursor() {
-    document.body.classList.remove('cursor-hidden');
+  document.body.classList.remove("cursor-hidden");
 }
 
 function hideCursor() {
-    document.body.classList.add('cursor-hidden');
+  document.body.classList.add("cursor-hidden");
 }
 
 function resetCursorTimer() {
-    if (document.hasFocus()) {
-        showCursor();
-        clearTimeout(cursorTimeout);
-        cursorTimeout = setTimeout(hideCursor, CURSOR_HIDE_DELAY);
-    } else {
-        hideCursor();
-    }
+  if (document.hasFocus()) {
+    showCursor();
+    clearTimeout(cursorTimeout);
+    cursorTimeout = setTimeout(hideCursor, CURSOR_HIDE_DELAY);
+  } else {
+    hideCursor();
+  }
 }
 
 // Initialize styling
 setStyling();
 
 // Handle mouse movement
-document.addEventListener('mousemove', resetCursorTimer);
+document.addEventListener("mousemove", resetCursorTimer);
 
 // Handle window focus events
-window.addEventListener('focus', resetCursorTimer);
-window.addEventListener('blur', hideCursor);
+window.addEventListener("focus", resetCursorTimer);
+window.addEventListener("blur", hideCursor);
 
 // Initialize cursor timer
 resetCursorTimer();
 
 // Handle keyboard events
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        // Close display window on ESC
-        window.electron.window.display.close();
-    } else if (event.key === 'S' || event.key === 's' || event.key === 'P' || event.key === 'p') {
-        // Close display window and open settings on S or P
-        window.electron.window.settings.start();
-        window.electron.window.display.close();
-    }
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    // Close display window on ESC
+    window.electron.window.display.close();
+  } else if (
+    event.key === "S" ||
+    event.key === "s" ||
+    event.key === "P" ||
+    event.key === "p"
+  ) {
+    // Close display window and open settings on S or P
+    window.electron.window.settings.start();
+    window.electron.window.display.close();
+  }
 });
 
 // Initialize when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    fetchSlideText();
-    wsConnect();
-    // Update every 100 ms
-    setInterval(fetchSlideText, 100);
+document.addEventListener("DOMContentLoaded", () => {
+  fetchSlideText();
+  wsConnect();
+  // Update every 100 ms
+  setInterval(fetchSlideText, 100);
 });
