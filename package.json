@@ -6,13 +6,16 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:dir": "electron-builder --win --dir"
   },
   "author": "LostViking09",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
     "eslint": "^8.57.1",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
@@ -21,5 +24,26 @@
   "dependencies": {
     "electron-store": "^10.0.0",
     "font-list": "^1.5.1"
+  },
+  "build": {
+    "appId": "com.lostviking09.openlp-display-client",
+    "productName": "OpenLP Display Client",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "settingsSchema.js",
+      "src/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    }
   }
 }
